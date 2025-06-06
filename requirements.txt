@@ -151,7 +151,7 @@ python-socks[asyncio]==2.7.1
     # via aiohttp-socks
 pyunormalize==16.0.0
     # via web3
-pywin32==310
+pywin32==310; sys_platform=="win32"
     # via web3
 qrcode==8.2
     # via -r requirements.in
