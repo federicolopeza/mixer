@@ -1,5 +1,6 @@
 import argparse
 import getpass
+import os
 from rich.console import Console
 from rich.prompt import Prompt, Confirm
 from .core.web3_utils import es_direccion_valida
@@ -53,10 +54,15 @@ def gather_user_inputs(config: dict) -> tuple:
             exit(1)
         final_wallets.append(address)
 
-    password = getpass.getpass("🔑 Introduce una contraseña para encriptar el reporte final: ")
-    if not password:
-        log.print("[bold red]❌ La contraseña no puede estar vacía.")
-        exit(1)
+    # Obtener contraseña desde variable de entorno o prompt
+    password = os.environ.get('MIXER_PASSWORD')
+    if password:
+        log.print("[bold green]🔒 Usando contraseña de variable de entorno MIXER_PASSWORD.")
+    else:
+        password = getpass.getpass("🔑 Introduce una contraseña para encriptar el reporte final: ")
+        if not password:
+            log.print("[bold red]❌ La contraseña no puede estar vacía.")
+            exit(1)
 
     log.rule("[bold yellow]Confirmación Final")
     log.print(f"Estrategia: [cyan]{config['strategy_description']}[/cyan]")
