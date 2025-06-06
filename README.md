@@ -1,35 +1,35 @@
 # Epic Mixer 🌪️
-### An Experimental Multi-Layer Transaction Obfuscation Orchestrator for BSC
+### Un Orquestador Experimental de Ofuscación de Transacciones Multi-Capa para BSC
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-![Status: Experimental](https://img.shields.io/badge/status-experimental-red.svg)
+[![License: MIT](https://img.shields.io/badge/Licencia-MIT-green.svg)](https://opensource.org/licenses/MIT)
+![Estado: Experimental](https://img.shields.io/badge/estado-experimental-red.svg)
 
-**Epic Mixer** is a command-line framework designed for advanced, experimental research into blockchain transaction privacy. It functions as a sophisticated **orchestrator**, executing user-defined strategies to fragment and obfuscate transaction trails on the Binance Smart Chain (BSC) across multiple layers and systems.
-
----
-
-## ⚠️ EXTREMELY IMPORTANT: This is an Experimental Tool
-
-**USE AT YOUR OWN IMMENSE RISK. THIS IS NOT A TOOL FOR ILLEGAL ACTIVITIES. IT IS A RESEARCH FRAMEWORK.**
-
--   **High Risk of Fund Loss**: This software is complex and experimental. Misconfiguration, network errors, or undiscovered bugs can and likely will lead to the **total and irreversible loss of funds**.
--   **No Guarantees of Privacy**: While it aims to dramatically complicate transaction analysis, it **cannot guarantee absolute anonymity**. Determined adversaries with sufficient resources may still be able to trace funds.
--   **For Educational & Research Purposes Only**: This tool was developed to explore concepts of multi-system transaction obfuscation. The developers are not responsible for any use, misuse, or loss of assets.
+**Epic Mixer** es un framework de línea de comandos diseñado para la investigación avanzada y experimental de la privacidad en transacciones de blockchain. Funciona como un **orquestador** sofisticado, ejecutando estrategias definidas por el usuario para fragmentar y ofuscar los rastros de las transacciones en la Binance Smart Chain (BSC) a través de múltiples capas y sistemas.
 
 ---
 
-## 🏛️ Core Concepts & Architecture
+## ⚠️ EXTREMADAMENTE IMPORTANTE: Esta es una Herramienta Experimental
 
-Epic Mixer is not a simple "tumbler." It's an **orchestrator** that you command. The core philosophy is **multi-layered, strategy-driven obfuscation**.
+**ÚSALA BAJO TU PROPIO E INMENSO RIESGO. ESTA NO ES UNA HERRAMIENTA PARA ACTIVIDADES ILEGALES. ES UN FRAMEWORK DE INVESTIGACIÓN.**
 
-1.  **Strategy-Driven**: You define the entire mixing plan in a `strategy.json` file. This includes the number of wallets, mixing rounds, and, most importantly, the **distribution legs**.
-2.  **Multi-Layer Distribution**: Instead of a single destination, the funds are fragmented and sent through multiple "legs," such as:
-    -   **Exchanges**: A portion of funds can be sent to a deposit address you provide from an external exchange.
-    -   **Privacy Pools (Simulated)**: A portion can be sent to an intermediary wallet to simulate interaction with a privacy protocol like Tornado Cash.
-    -   **Direct Fragmentation**: The remainder can be distributed directly to your final destination wallets.
-3.  **Non-Custodial & Ephemeral**: The tool operates on a "Safe Box" model. It generates a new, ephemeral mnemonic and deposit address for each session. **You never enter your private keys.** You send funds *to* the script's temporary wallet.
-4.  **Encrypted Reporting**: Upon completion, all session data, including the ephemeral mnemonic and generated private keys, is saved to a password-encrypted file. Without the password, the data is useless.
+-   **Alto Riesgo de Pérdida de Fondos**: Este software es complejo y experimental. Una mala configuración, errores de red o bugs no descubiertos pueden y probablemente conducirán a la **pérdida total e irreversible de tus fondos**.
+-   **Sin Garantías de Privacidad**: Aunque su objetivo es complicar drásticamente el análisis de transacciones, **no puede garantizar un anonimato absoluto**. Adversarios con suficientes recursos podrían rastrear los fondos.
+-   **Solo para Fines Educativos y de Investigación**: Esta herramienta fue desarrollada para explorar conceptos de ofuscación de transacciones multi-sistema. Los desarrolladores no se hacen responsables de ningún uso, mal uso o pérdida de activos.
+
+---
+
+## 🏛️ Conceptos Clave y Arquitectura
+
+Epic Mixer no es un simple "tumbler". Es un **orquestador** que tú diriges. La filosofía central es la **ofuscación multi-capa dirigida por estrategias**.
+
+1.  **Dirigido por Estrategia**: Defines el plan de mezcla completo en un archivo `strategy.json`. Esto incluye el número de wallets, las rondas de mezcla y, lo más importante, los **brazos de distribución** (distribution legs).
+2.  **Distribución Multi-Capa**: En lugar de un único destino, los fondos se fragmentan y se envían a través de múltiples "brazos", tales como:
+    -   **Exchanges**: Una porción de los fondos puede ser enviada a una dirección de depósito que tú proporciones de un exchange externo.
+    -   **Pools de Privacidad (Simulado)**: Una porción puede ser enviada a una wallet intermediaria para simular la interacción con un protocolo de privacidad como Tornado Cash.
+    -   **Fragmentación Directa**: El resto puede ser distribuido directamente a tus wallets de destino finales.
+3.  **No Custodial y Efímero**: La herramienta opera bajo un modelo de "Caja Fuerte". Genera un nuevo mnemónico efímero y una dirección de depósito para cada sesión. **Nunca introduces tus claves privadas.** Envías los fondos *a* la wallet temporal del script.
+4.  **Reportes Encriptados**: Al finalizar, todos los datos de la sesión, incluyendo el mnemónico efímero y las claves privadas generadas, se guardan en un archivo encriptado con contraseña. Sin la contraseña, los datos son inútiles.
 
 ```mermaid
 graph TD
@@ -96,79 +96,78 @@ graph TD
 
 ---
 
-## 📋 Requirements
+## 📋 Requisitos
 
 -   Python 3.9+
 
-## 🚀 Installation & Setup
+## 🚀 Instalación y Configuración
 
-1.  **Clone the Repository**:
+1.  **Clona el Repositorio**:
     ```bash
-    git clone <YOUR_REPOSITORY_URL>
+    git clone <URL_DE_TU_REPOSITORIO>
     cd epic-mixer
     ```
 
-2.  **Set up a Virtual Environment (Highly Recommended)**:
+2.  **Crea un Entorno Virtual (Altamente Recomendado)**:
     ```bash
     python -m venv venv
-    # On macOS/Linux:
+    # En macOS/Linux:
     source venv/bin/activate
-    # On Windows:
+    # En Windows:
     venv\Scripts\activate
     ```
 
-3.  **Install Dependencies**:
+3.  **Instala las Dependencias**:
     ```bash
     pip install -r requirements.txt
     ```
 
-4.  **Create Your Strategy**:
-    -   Copy the example strategy file:
+4.  **Crea Tu Estrategia**:
+    -   Copia el archivo de estrategia de ejemplo:
         ```bash
         cp strategy.json.example strategy.json
         ```
-    -   **Edit `strategy.json`** to define your desired obfuscation plan.
+    -   **Edita `strategy.json`** para definir tu plan de ofuscación.
 
 ---
 
-## ▶️ How to Use
+## ▶️ Modo de Uso
 
-The entire process is orchestrated through the command line.
+Todo el proceso se orquesta a través de la línea de comandos.
 
-### Step 1: Launch the Mixer
+### Paso 1: Inicia el Mixer
 
-Execute the script from the root directory. Use the `--network` flag for mainnet operations.
+Ejecuta el script desde el directorio raíz. Usa el flag `--network` para operaciones en la red principal (Mainnet).
 
 ```bash
-# To run on the SAFE, FREE Testnet (DEFAULT)
+# Para ejecutar en la Testnet SEGURA y GRATUITA (POR DEFECTO)
 python run_mixer.py
 
-# To run on the REAL, RISKY Mainnet
+# Para ejecutar en la Mainnet REAL y RIESGOSA
 python run_mixer.py --network mainnet
 ```
 
-### Step 2: Deposit Funds
+### Paso 2: Deposita los Fondos
 
-The script will generate and display a unique, one-time deposit address and a QR code. Send the BNB you wish to process to this address from your secure wallet or exchange. The script will wait and automatically detect the deposit.
+El script generará y mostrará una dirección de depósito única y de un solo uso, junto con un código QR. Envía los BNB que deseas procesar a esta dirección desde tu wallet segura o exchange. El script esperará y detectará el depósito automáticamente.
 
-### Step 3: Configure Destinations
+### Paso 3: Configura los Destinos
 
-Once funds are detected, the script will guide you through a series of prompts based on your `strategy.json` file:
+Una vez detectados los fondos, el script te guiará a través de una serie de preguntas basadas en tu archivo `strategy.json`:
 
--   It will ask you to provide deposit addresses for any `exchange` legs.
--   It will ask you how many final wallets you want and their addresses.
--   Finally, it will ask for a **strong password** to encrypt the final report file.
+-   Te pedirá que proporciones las direcciones de depósito para cualquier "brazo" de tipo `exchange`.
+-   Te preguntará cuántas wallets finales deseas y sus direcciones.
+-   Finalmente, te pedirá una **contraseña segura** para encriptar el archivo de reporte final.
 
-### Step 4: Execution & Reporting
+### Paso 4: Ejecución y Reporte
 
-After your final confirmation, the orchestrator will execute the strategy. Upon completion, it will generate an encrypted file named `mixer_report_encrypted_...dat`.
+Tras tu confirmación final, el orquestador ejecutará la estrategia. Al completarse, generará un archivo encriptado llamado `mixer_report_encrypted_...dat`.
 
 ---
 
-##  decryption-tool.py
+##  Herramienta de Desencriptación (decryption-tool.py)
 
-To decrypt and view your session report, you will need a separate script.
-You can create a new file and add this to it.
+Para desencriptar y ver el reporte de tu sesión, necesitarás un script separado. Puedes crear un nuevo archivo `decryption-tool.py` y añadirle este código:
 ```python
 import getpass
 import json
@@ -199,14 +198,16 @@ def decrypt_data(encrypted_data: bytes, password: str) -> dict:
 
 def main():
     """CLI para desencriptar un reporte."""
-    print("--- Epic Mixer Report Decryptor ---")
-    file_path = input("Arrastra o pega la ruta al archivo .dat encriptado: ").strip().replace("'", "")
+    print("--- Desencriptador de Reportes Epic Mixer ---")
+    file_path_input = input("Arrastra o pega la ruta al archivo .dat encriptado: ").strip()
+    # Limpiar comillas si el usuario arrastra el archivo (común en Windows)
+    file_path = file_path_input.replace("'", "").replace('"', '')
     
     try:
         with open(file_path, 'rb') as f:
             encrypted_data = f.read()
     except FileNotFoundError:
-        print("❌ Error: Archivo no encontrado.")
+        print(f"❌ Error: Archivo no encontrado en la ruta: {file_path}")
         return
         
     password = getpass.getpass("🔑 Introduce la contraseña de la sesión: ")
@@ -222,7 +223,3 @@ def main():
 if __name__ == "__main__":
     main()
 ```
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
