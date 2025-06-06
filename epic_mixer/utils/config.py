@@ -1,7 +1,8 @@
 import json
+from typing import Dict, List, Optional
+
+from pydantic import BaseModel, ValidationError, confloat, model_validator, validator
 from rich.console import Console
-from pydantic import BaseModel, confloat, validator, model_validator, ValidationError
-from typing import List, Optional, Dict
 
 log = Console()
 

@@ -1,7 +1,7 @@
-from web3 import AsyncWeb3
-from web3 import AsyncHTTPProvider
 from aiohttp_socks import ProxyConnector
 from rich.console import Console
+from web3 import AsyncHTTPProvider, AsyncWeb3
+
 from epic_mixer.core.web3_utils import RPC_URLS
 
 console = Console()

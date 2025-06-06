@@ -3,15 +3,18 @@ import random
 import secrets
 
 sr = secrets.SystemRandom()
-from typing import Dict, List, Any
+from typing import Any, Dict, List
+
 from rich.console import Console
-from web3 import Web3, AsyncWeb3
-from .web3_utils import enviar_transaccion
-from epic_mixer.noise_generator import generate_noise
-from epic_mixer.failover import handle_failover
+from web3 import AsyncWeb3, Web3
+
 from epic_mixer.bridges import get_bridge_adapter
 from epic_mixer.dex import get_dex_adapter
+from epic_mixer.failover import handle_failover
+from epic_mixer.noise_generator import generate_noise
 from epic_mixer.utils.advanced_reporting import generate_merkle_root
+
+from .web3_utils import enviar_transaccion
 
 log = Console()
 

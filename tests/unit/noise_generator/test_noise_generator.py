@@ -1,4 +1,5 @@
 import pytest
+
 from epic_mixer.noise_generator import generate_noise
 
 

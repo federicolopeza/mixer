@@ -1,8 +1,10 @@
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import secrets
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 sr = secrets.SystemRandom()
 from datetime import datetime, timedelta
+
 from rich.console import Console
 
 console = Console()

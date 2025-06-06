@@ -1,12 +1,11 @@
 import asyncio
 import time
-from typing import Dict, Any
+from typing import Any, Dict
 
 import qrcode
 from rich.console import Console
 from rich.spinner import Spinner
-from web3 import Web3, AsyncWeb3
-from web3 import AsyncHTTPProvider
+from web3 import AsyncHTTPProvider, AsyncWeb3, Web3
 
 log = Console()
 

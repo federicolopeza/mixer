@@ -1,4 +1,5 @@
 import pytest
+
 from epic_mixer.bridges.stargate_adapter import StargateAdapter
 
 

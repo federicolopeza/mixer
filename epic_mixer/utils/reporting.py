@@ -1,5 +1,7 @@
 import datetime
+
 from rich.console import Console
+
 from .encryption import encrypt_data
 
 log = Console()

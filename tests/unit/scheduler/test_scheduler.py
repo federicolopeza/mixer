@@ -1,6 +1,8 @@
-import pytest
-from epic_mixer.scheduler import MixerScheduler
 from datetime import datetime
+
+import pytest
+
+from epic_mixer.scheduler import MixerScheduler
 
 
 @pytest.mark.asyncio

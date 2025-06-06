@@ -1,4 +1,5 @@
 from typing import List
+
 from eth_account import Account as EthAccount
 from eth_account.signers.local import LocalAccount
 from mnemonic import Mnemonic

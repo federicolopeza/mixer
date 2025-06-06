@@ -1,7 +1,8 @@
-import json
 import argparse
-import pytest
+import json
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 
 from epic_mixer.main import run
 

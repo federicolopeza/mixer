@@ -1,5 +1,7 @@
 import json
+
 import pytest
+
 from epic_mixer.utils.config import load_strategy
 
 

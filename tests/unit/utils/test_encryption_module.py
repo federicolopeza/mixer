@@ -1,9 +1,10 @@
 import pytest
+
 from epic_mixer.utils.encryption import (
-    encrypt_data,
-    decrypt_data,
-    SALT_SIZE,
     NONCE_SIZE,
+    SALT_SIZE,
+    decrypt_data,
+    encrypt_data,
 )
 
 

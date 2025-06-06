@@ -1,7 +1,8 @@
-from .base import BaseBridgeAdapter
-from web3 import AsyncWeb3
-from rich.console import Console
 import aiohttp
+from rich.console import Console
+from web3 import AsyncWeb3
+
+from .base import BaseBridgeAdapter
 
 console = Console()
 

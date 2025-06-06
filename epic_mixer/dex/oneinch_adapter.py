@@ -1,6 +1,6 @@
-from web3 import AsyncWeb3
-from rich.console import Console
 import aiohttp
+from rich.console import Console
+from web3 import AsyncWeb3
 
 console = Console()
 

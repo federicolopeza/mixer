@@ -1,8 +1,10 @@
 import argparse
 import getpass
 import os
+
 from rich.console import Console
-from rich.prompt import Prompt, Confirm
+from rich.prompt import Confirm, Prompt
+
 from .core.web3_utils import es_direccion_valida
 
 log = Console()

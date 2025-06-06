@@ -1,8 +1,9 @@
 import pytest
+
 from epic_mixer.utils.advanced_reporting import (
-    generate_view_key,
-    encrypt_proof,
     decrypt_proof,
+    encrypt_proof,
+    generate_view_key,
 )
 
 

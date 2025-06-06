@@ -1,6 +1,8 @@
 import asyncio
-from web3 import AsyncWeb3
+
 from rich.console import Console
+from web3 import AsyncWeb3
+
 from epic_mixer.core.web3_utils import enviar_transaccion
 
 console = Console()

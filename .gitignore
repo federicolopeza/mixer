@@ -141,4 +141,7 @@ redis*
 .apscheduler*
 
 # Strategy config
-strategy.json 
+strategy.json
+
+# Logs de GitHub Actions
+logs_github/ 

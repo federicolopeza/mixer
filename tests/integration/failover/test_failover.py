@@ -1,4 +1,5 @@
 import pytest
+
 from epic_mixer.failover import handle_failover
 
 

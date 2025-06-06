@@ -1,4 +1,5 @@
 import pytest
+
 from epic_mixer.dex.pancakeswap_adapter import PancakeSwapAdapter
 
 
