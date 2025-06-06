@@ -10,7 +10,7 @@
 - [x] **R3: Seguridad criptográfica AES-GCM**  
   - Auditar unicidad de IVs en todos los cifrados.  
   - Añadir tests específicos de IVs y longitudes de etiqueta.  
-- [ ] **R4: Manejo seguro de claves privadas**  
+- [x] **R4: Manejo seguro de claves privadas**  
   - Revisar flujo y almacenamiento de mnemónicos/keys.  
   - Asegurar uso de variables de entorno y evitar hard-code.  
 - [x] **R5: Validación de entradas CLI & `strategy.json`**  
