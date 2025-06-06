@@ -18,7 +18,7 @@
   - Añadir tests de inputs malformados.  
 
 ## Fase 2 (31–60 días): Harden de calidad y primeras pruebas E2E  
-- [ ] **R6: Integración de análisis estático**  
+- [x] **R6: Integración de análisis estático**  
   - Integrar Flake8, Pylint, Mypy y Bandit en CI.  
   - Corregir issues críticos/High de cada herramienta.  
 - [ ] **R7: Primeros tests End-to-End en testnet**  
