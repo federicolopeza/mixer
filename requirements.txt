@@ -3,4 +3,13 @@ rich
 aiohttp
 qrcode
 mnemonic
-pycryptodome 
+pycryptodome
+ccxt
+apscheduler
+redis
+numpy
+scipy
+aiohttp-socks
+stem
+pytest
+pytest-asyncio 

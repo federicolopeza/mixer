@@ -21,76 +21,65 @@
 
 ## 🏛️ Conceptos Clave y Arquitectura
 
-Epic Mixer no es un simple "tumbler". Es un **orquestador** que tú diriges. La filosofía central es la **ofuscación multi-capa dirigida por estrategias**.
+Epic Mixer implementa un modelo de ofuscación avanzado que se puede dividir en cuatro fases principales, diseñadas para romper la trazabilidad y los patrones de análisis on-chain.
 
-1.  **Dirigido por Estrategia**: Defines el plan de mezcla completo en un archivo `strategy.json`. Esto incluye el número de wallets, las rondas de mezcla y, lo más importante, los **brazos de distribución** (distribution legs).
-2.  **Distribución Multi-Capa**: En lugar de un único destino, los fondos se fragmentan y se envían a través de múltiples "brazos", tales como:
-    -   **Exchanges**: Una porción de los fondos puede ser enviada a una dirección de depósito que tú proporciones de un exchange externo.
-    -   **Pools de Privacidad (Simulado)**: Una porción puede ser enviada a una wallet intermediaria para simular la interacción con un protocolo de privacidad como Tornado Cash.
-    -   **Fragmentación Directa**: El resto puede ser distribuido directamente a tus wallets de destino finales.
-3.  **No Custodial y Efímero**: La herramienta opera bajo un modelo de "Caja Fuerte". Genera un nuevo mnemónico efímero y una dirección de depósito para cada sesión. **Nunca introduces tus claves privadas.** Envías los fondos *a* la wallet temporal del script.
-4.  **Reportes Encriptados**: Al finalizar, todos los datos de la sesión, incluyendo el mnemónico efímero y las claves privadas generadas, se guardan en un archivo encriptado con contraseña. Sin la contraseña, los datos son inútiles.
+1.  **Modelo "Caja Fuerte" (No Custodial)**: No necesitas introducir tus claves privadas. El script genera una **sesión efímera** con una wallet de depósito de un solo uso. Simplemente envías los fondos a esta dirección para iniciar el proceso.
+2.  **Financiación en Cadena (Chain Funding)**: Para evitar el patrón "hub-and-spoke" (un origen fondeando a muchos), que es fácilmente detectable, el mezclador utiliza una financiación en cadena. La wallet de depósito fondea a la primera wallet de estrategia (`S1`), `S1` fondea a `S2`, `S2` a `S3`, y así sucesivamente. Esto crea una cadena de transacciones que ofusca el origen común de los fondos.
+3.  **Tormenta de Mezcla Caótica (Chaotic Mixing Storm)**: Este es el corazón de la ofuscación.
+    *   **Pre-fondeo para Gas**: Antes de la tormenta, un conjunto de wallets de tormenta (`T1`, `T2`, etc.) son fondeadas con una pequeña cantidad de BNB para cubrir las tasas de gas.
+    *   **Inyección y Mezcla**: Los fondos de las wallets de estrategia se envían a las wallets de tormenta. A continuación, se ejecuta un número configurable de rondas de transacciones, donde las wallets de tormenta se envían fondos entre sí de forma aleatoria (monto y destino).
+    *   **Consolidación**: Tras la tormenta, los fondos (ahora mezclados) se consolidan de nuevo en las wallets de estrategia, listos para la distribución final.
+4.  **Distribución Estratégica Multi-Vector**: Una vez mezclados los fondos, se ejecutan los "brazos" definidos en tu `strategy.json`, enviando los fondos a exchanges, pools de privacidad (simulados) o wallets finales.
+5.  **Reporte Encriptado**: Todos los datos sensibles de la sesión (mnemónico, claves, etc.) se guardan en un archivo final encriptado con una contraseña que tú proporcionas.
 
 ```mermaid
-graph LR
-    subgraph "🔧 Fase 1: Preparación del Sistema"
-        direction TB
-        U[👨‍💻 Usuario] -.->|"ejecuta comando"| RUN(▶️ run_mixer.py)
-        RUN -->|"inicia orquestador"| MAIN{🎬 main.py<br/>Director Central}
-        MAIN -->|"lee configuración"| CONF([📄 strategy.json<br/>Plan de Mezcla])
-        MAIN -->|"genera sesión efímera"| WLT([🔑 Generador de Wallets<br/>⚡ Temporales])
-        WLT -.->|"mnemónico + direcciones"| TEMP[(🗃️ Sesión Temporal)]
+graph TD
+    subgraph "Fase 1: Preparación y Financiación"
+        U[👨‍💻 Usuario] --> RUN(▶️ run_mixer.py)
+        RUN --> MAIN{🎬 Orquestador}
+        MAIN --> WLT[🔑 Genera Sesión Efímera]
+        WLT --> DEP(📬 Wallet de Depósito)
+        U -- "envía BNB" --> DEP
+        
+        subgraph "Financiación en Cadena (Rompe patrón 'Hub-and-Spoke')"
+            DEP -- "1. financia S1" --> S1(ռ Wallet Estrategia 1)
+            S1 -- "2. financia S2" --> S2(ռ Wallet Estrategia 2)
+            S2 -- "3. financia S3" --> S3(ռ ... etc)
+        end
     end
 
-    subgraph "💰 Fase 2: Recepción Segura de Fondos"
-        direction TB
-        TEMP -.->|"dirección de depósito"| W3U([🔗 Monitor Blockchain<br/>Detecta Transacciones])
-        W3U -->|"muestra QR + dirección"| DISPLAY[📱 Código QR<br/>+ Dirección BSC]
-        DISPLAY -.->|"usuario escanea/copia"| U
-        U -->|"envía BNB desde wallet externa"| BLOCKCHAIN[(🌐 Binance Smart Chain<br/>Red Pública)]
-        BLOCKCHAIN -->|"transacción detectada ✅"| W3U
-        W3U -.->|"fondos confirmados"| BALANCE[💎 Fondos Seguros<br/>En Wallet Temporal]
-    end
-    
-    subgraph "⚙️ Fase 3: Configuración Interactiva"
-        direction TB
-        BALANCE -.->|"fondos listos"| MAIN
-        MAIN -->|"solicita configuración"| CLI([🗣️ Interfaz Interactiva<br/>Recopila Destinos])
-        CLI -->|"pregunta direcciones exchange"| PROMPT1[❓ Direcciones de Exchange<br/>para Distribución]
-        CLI -->|"pregunta wallets finales"| PROMPT2[❓ Wallets de Destino Final<br/>del Usuario]
-        CLI -->|"solicita contraseña segura"| PROMPT3[🔐 Contraseña de Encriptación<br/>para Reporte]
-        PROMPT1 & PROMPT2 & PROMPT3 -.->|"datos sensibles"| U
-        U -.->|"introduce información"| CLI
-        CLI -.->|"configuración completa"| CONFIG[⚡ Plan de Ejecución<br/>Listo para Orquestación]
+    subgraph "Fase 2: Tormenta de Mezcla Caótica (Corazón de la Ofuscación)"
+        MAIN -- "fondea para gas" --> T1(🌪️) & T2(🌪️) & T3(🌪️) & T4(🌪️) & T5(🌪️)
+        subgraph "Pool de Tormenta"
+            direction LR
+            S1 & S2 & S3 -- "inyectan fondos" --> T1 & T2 & T3 & T4 & T5
+            T1 -- "tx aleatoria" --> T4
+            T3 -- "tx aleatoria" --> T2
+            T5 -- "tx aleatoria" --> T1
+            T2 -- "tx aleatoria" --> T5
+            T4 -- "tx aleatoria" --> T3
+        end
+        T1 & T2 & T3 & T4 & T5 -- "consolidan fondos mezclados" --> S1 & S2 & S3
     end
 
-    subgraph "🌪️ Fase 4: Ejecución y Reporte Final"
-        direction TB
-        CONFIG -.->|"inicia ejecución"| MAIN
-        MAIN -->|"delega orquestación"| ORCH([🎭 Orquestador Épico<br/>Motor de Mezcla])
-        ORCH -->|"fragmenta y distribuye"| MULTI[🔀 Distribución Multi-Brazo<br/>Exchanges + Pools + Directa]
-        MULTI -->|"ejecuta transacciones"| BLOCKCHAIN
-        BLOCKCHAIN -.->|"confirmaciones de red"| ORCH
-        ORCH -.->|"ejecución completada ✅"| MAIN
-        MAIN -->|"genera reporte detallado"| REP([📊 Generador de Reportes<br/>Recopila Todos los Datos])
-        REP -->|"encripta con contraseña"| OUT([📄 Archivo Encriptado<br/>reporte_encriptado.dat])
-        OUT -.->|"reporte seguro guardado"| U
+    subgraph "Fase 3: Ejecución de Estrategia Final"
+        S1 -- "Ejecuta Pierna 1" --> V1{Vector 1<br>p.ej. Exchange}
+        S2 -- "Ejecuta Pierna 2" --> V2{Vector 2<br>p.ej. Pool Privacidad}
+        S3 -- "Ejecuta Pierna 3" --> V3{Vector 3<br>p.ej. Wallet Final}
     end
-    
-    %% Estilos para diferencia visual clara
-    style U fill:#3B4252,stroke:#81A1C1,color:#ECEFF4,stroke-width:3px
-    style BLOCKCHAIN fill:#A3BE8C,stroke:#4C566A,color:#2E3440,stroke-width:3px
-    style RUN fill:#BF616A,stroke:#D8DEE9,color:#ECEFF4
-    style OUT fill:#EBCB8B,stroke:#4C566A,color:#2E3440
-    style TEMP fill:#B48EAD,stroke:#4C566A,color:#ECEFF4
-    style BALANCE fill:#88C0D0,stroke:#4C566A,color:#2E3440
-    style CONFIG fill:#D08770,stroke:#4C566A,color:#ECEFF4
-    style MULTI fill:#A3BE8C,stroke:#4C566A,color:#2E3440
-    
-    %% Estilos de las fases
+
+    subgraph "Fase 4: Reporte Seguro"
+        MAIN --> REP(📊 Genera Reporte)
+        REP -- "contraseña de usuario" --> OUT([📄 reporte_encriptado.dat])
+    end
+
     style U fill:#3B4252,stroke:#81A1C1,color:#ECEFF4
-    style BLOCKCHAIN fill:#A3BE8C,stroke:#4C566A,color:#2E3440
-    style RUN fill:#BF616A,stroke:#D8DEE9,color:#ECEFF4
+    style Pool de Tormenta fill:#BF616A,stroke:#D8DEE9,color:#ECEFF4,stroke-width:2px,stroke-dasharray: 5 5
+    style T1 fill:#D08770,stroke:#4C566A,color:#ECEFF4
+    style T2 fill:#D08770,stroke:#4C566A,color:#ECEFF4
+    style T3 fill:#D08770,stroke:#4C566A,color:#ECEFF4
+    style T4 fill:#D08770,stroke:#4C566A,color:#ECEFF4
+    style T5 fill:#D08770,stroke:#4C566A,color:#ECEFF4
     style OUT fill:#EBCB8B,stroke:#4C566A,color:#2E3440
 ```
 
@@ -222,6 +211,26 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+## 🌟 SuperMixer v2: Características Avanzadas
+
+- **Cross-Chain Bridges**: integración con cBridge y Stargate para mover fondos entre BSC, Polygon zkEVM, Arbitrum, etc.
+- **DEX Swaps**: soporta PancakeSwap v3 y 1inch API para intercambiar activos y romper trazabilidad.
+- **Ruido Inteligente**: micro-transacciones y llamadas a contratos populares (NFTs, staking) para camuflar actividad.
+- **Planificación Temporal**: tareas programadas con APScheduler y ventanas de alta actividad para ofuscación temporal.
+- **OpSec por Tor**: enruta las llamadas RPC a través de un proxy SOCKS5 (Tor) para ocultar la IP del usuario.
+- **Failover Seguro**: mecanismo automático de recuperación y vault de emergencia si falla la orquestación.
+- **Advanced Reporting**: genera pruebas Merkle y view-keys para compartir selectivamente partes del rastro.
+
+### Uso con SuperMixer v2
+1. Copia el ejemplo `strategy_v2.json.example` a `strategy.json` y edítalo con tus parámetros.
+2. Asegúrate de tener corriendo un proxy Tor en `127.0.0.1:9050` para habilitar OpSec.
+3. Ejecuta:
+   ```bash
+   python run_mixer.py --network testnet
+   ```
+4. Sigue las indicaciones: direcciones de destino, confirmación y contraseña para el reporte.
+5. Al finalizar, obtendrás `mixer_report_encrypted_YYYYMMDD_HHMMSS.dat` y la raíz Merkle.
 
 ## 📄 Licencia
 

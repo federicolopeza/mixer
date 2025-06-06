@@ -1,0 +1,63 @@
+{
+  "strategy_description": "SuperMixer v2 - Cross-Chain + DEX + Ruido",
+  "bridges": [
+    {
+      "name": "cBridge",
+      "from_chain": "bsc",
+      "to_chain": "polygon_zkevm",
+      "amount_pct": 40
+    },
+    {
+      "name": "Stargate",
+      "from_chain": "bsc",
+      "to_chain": "arbitrum",
+      "amount_pct": 30
+    }
+  ],
+  "dex_swaps": [
+    {
+      "chain": "polygon_zkevm",
+      "router": "0x",
+      "path": ["MATIC", "USDC", "MATIC"],
+      "slippage": 0.005
+    },
+    {
+      "chain": "arbitrum",
+      "router": "1inch",
+      "path": ["ETH", "USDT", "ETH"],
+      "slippage": 0.007
+    }
+  ],
+  "noise_profile": {
+    "n_micro_txs": {"min": 5, "max": 15},
+    "contract_pool": [
+      "0xGamingDapp",
+      "0xCheapNFT",
+      "0xStakingProtocol"
+    ]
+  },
+  "storm": {
+    "wallets": 8,
+    "mixing_rounds": 25,
+    "gas_amount_bnb": 0.003,
+    "time_delay_sec": {"min": 30, "max": 900}
+  },
+  "distribution": [
+    {
+      "name": "Exchange A",
+      "type": "exchange",
+      "destination_address": "PEGAR_ADDRESS",
+      "amount_pct": 50
+    },
+    {
+      "name": "Direct Stealth",
+      "type": "direct_distribution",
+      "destination_address": "GENERATED_STEALTH",
+      "amount_pct": 50
+    }
+  ],
+  "time_windows": {
+    "active_hours": [9, 23],
+    "weekend_bias": 0.3
+  }
+} 

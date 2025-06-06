@@ -121,4 +121,21 @@ venv.bak/
 dmypy.json
 
 # Pyre type checker
-.pyre/ 
+.pyre/
+
+# Encrypted mixer reports
+*.dat
+
+# Redis databases y snapshots
+dump.rdb
+redis*
+
+# Archivos de log adicionales
+*.log
+
+# Credenciales y archivos temporales
+.env*
+.db
+
+# Scheduler database
+.apscheduler* 
