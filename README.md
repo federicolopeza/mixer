@@ -68,7 +68,7 @@ sequenceDiagram
 ## ⚙️ Instalación Rápida
 ```bash
 # Clonar repositorio
-git clone <URL_REPOSITORIO>.git
+git clone https://github.com/Falopp/mixer.git
 cd mixer
 
 # Crear y activar entorno virtual
@@ -177,23 +177,3 @@ class MiBridgeAdapter(BaseBridgeAdapter):
 - `LOG_LEVEL`: nivel de logging (`DEBUG`, `INFO`, `WARN`, `ERROR`).
 
 ---
-
-## 🐞 Depuración y Logs
-- Usa `--verbose` para habilitar logs detallados.
-- Los logs se muestran con [rich](https://github.com/Textualize/rich).
-- Puedes redirigir la salida a un archivo:
-  ```bash
-  python run_mixer.py --network mainnet --verbose > mixer.log
-  ```
-
----
-
-## 🧪 Testing
-```bash
-pytest
-
-## 📄 Licencia
-[MIT](LICENSE) © Epic Mixer Developers
-
-[python]: https://www.python.org/downloads/
-[license]: LICENSE
