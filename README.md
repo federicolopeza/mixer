@@ -82,6 +82,42 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+## 💸 Flujo de Mezcla de Fondos
+```mermaid
+sequenceDiagram
+    participant U as Usuario
+    participant Dep as "Cartera de Depósito"
+    participant Estr as "Wallets de Estrategia"
+    participant Tor as "Tormenta de Mezcla"
+    participant CC as "Puentes Cross-Chain"
+    participant DEX as "DEX Swaps"
+    participant Dist as "Distribución Final"
+    participant Rep as "Reporte Cifrado"
+
+    U->>Dep: Deposita fondos
+    Dep->>Estr: Distribuye fondos a wallets de estrategia
+    Estr->>Tor: Ejecuta rondas de mezcla
+    Tor->>CC: Envía fragmentos a puentes
+    Tor->>DEX: Realiza swaps
+    CC & DEX->>Dist: Consolida fondos en wallets finales
+    Dist->>Rep: Genera y guarda reporte cifrado
+```
+
+## 🏛️ Diagrama de Arquitectura de Componentes
+```mermaid
+graph TB
+    CLI["CLI"] --> Config["Configuración"]
+    Config --> Orq["Orquestador"]
+    Orq --> Noise["NoiseGenerator"]
+    Orq --> Wallets["Wallets Module"]
+    Orq --> Bridges["Bridges Module"]
+    Orq --> Dex["DEX Module"]
+    Orq --> Scheduler["Scheduler"]
+    Orq --> Failover["Failover"]
+    Orq --> Reporting["Reporting"]
+    Orq --> Web3Utils["Web3 Utils"]
+```
+
 ---
 
 ## 🔧 Configuración de la Estrategia
