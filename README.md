@@ -32,66 +32,48 @@ Epic Mixer no es un simple "tumbler". Es un **orquestador** que tú diriges. La 
 4.  **Reportes Encriptados**: Al finalizar, todos los datos de la sesión, incluyendo el mnemónico efímero y las claves privadas generadas, se guardan en un archivo encriptado con contraseña. Sin la contraseña, los datos son inútiles.
 
 ```mermaid
-graph TD
-    subgraph " "
-        direction LR
-        U[👨‍💻 Tú]
+graph LR
+    subgraph "Fase 1: Preparación"
+        direction TB
+        U[👨‍💻 Tú] -- Ejecuta --> RUN[▶️ run_mixer.py]
+        RUN -- Inicia --> MAIN[🎬 main.py]
+        MAIN -- "Carga Estrategia" --> CONF[📄 utils/config.py]
+        MAIN -- "Crea Sesión Efímera" --> WLT[🔑 core/wallets.py]
     end
 
-    subgraph "Proyecto Epic Mixer (Tu Máquina Local)"
-        RUN[▶️ run_mixer.py]
-
-        subgraph "Paquete epic_mixer"
-            MAIN["🎬 main.py<br/>(El Director)"]
-            subgraph "Módulos de Utilidades"
-                CONF[📄 utils/config.py]
-                REP[📦 utils/reporting.py]
-            end
-            subgraph "Módulos del Núcleo"
-                W3U[🔗 core/web3_utils.py]
-                WLT[🔑 core/wallets.py]
-                ORCH[🌪️ core/orchestrator.py]
-            end
-            subgraph "Interfaz de Usuario"
-                CLI[🗣️ cli.py]
-            end
-        end
+    subgraph "Fase 2: Depósito"
+        direction TB
+        PREP[Fase 1] --> FDEP[Fase 2]
+        MAIN -- "Espera Depósito" --> W3U[🔗 core/web3_utils.py]
+        W3U -- "Muestra QR/Dirección" --> U
+        U -- "Envía BNB" --> BLOCKCHAIN[🌐 Binance Smart Chain]
+        BLOCKCHAIN -- "Detecta Fondos" --> W3U
     end
     
-    subgraph " "
-        direction LR
-        BLOCKCHAIN[🌐 Binance Smart Chain]
-    end
-    
-    subgraph " "
-        direction LR
-        OUT[📄 reporte_encriptado.dat]
+    subgraph "Fase 3: Configuración de Destinos"
+        direction TB
+        FDEP --> FCONF[Fase 3]
+        W3U -- "Notifica a" --> MAIN
+        MAIN -- "Pide Datos Sensibles" --> CLI[🗣️ cli.py]
+        CLI -- "Pregunta Destinos y Pass" --> U
+        U -- "Introduce Datos" --> CLI
     end
 
-
-    U -- "Ejecuta" --> RUN
-    RUN -- "Inicia" --> MAIN
+    subgraph "Fase 4: Orquestación y Reporte"
+        direction TB
+        FCONF --> FORCH[Fase 4]
+        CLI -- "Devuelve Datos a" --> MAIN
+        MAIN -- "Inicia Mezcla" --> ORCH[🌪️ core/orchestrator.py]
+        ORCH -- "Fragmenta y Envía TXs" --> BLOCKCHAIN
+        ORCH -- "Finalizado, notifica a" --> MAIN
+        MAIN -- "Crea Reporte" --> REP[📦 utils/reporting.py]
+        REP -- "Guarda Encriptado" --> OUT[📄 reporte_encriptado.dat]
+    end
     
-    MAIN -- "1. Carga estrategia" --> CONF
-    MAIN -- "2. Crea sesión" --> WLT
-    
-    MAIN -- "3. Espera depósito" --> W3U
-    W3U -- "Muestra QR" --> U
-    U -- "Envía BNB" --> BLOCKCHAIN
-    BLOCKCHAIN -- "Detecta fondos" --> W3U
-    
-    W3U -- "Notifica a" --> MAIN
-    MAIN -- "4. Pide datos" --> CLI
-    CLI -- "Pregunta destinos y pass" --> U
-    U -- "Introduce datos" --> CLI
-    CLI -- "Devuelve a" --> MAIN
-    
-    MAIN -- "5. ¡EJECUTAR!" --> ORCH
-    ORCH -- "Envía TXs" --> BLOCKCHAIN
-    
-    ORCH -- "Finalizado" --> MAIN
-    MAIN -- "6. Crea reporte" --> REP
-    REP -- "Guarda archivo" --> OUT
+    style PREP fill:#222,stroke:#333
+    style FDEP fill:#222,stroke:#333
+    style FCONF fill:#222,stroke:#333
+    style FORCH fill:#222,stroke:#333
 ```
 
 ---
