@@ -138,4 +138,7 @@ redis*
 .db
 
 # Scheduler database
-.apscheduler* 
+.apscheduler*
+
+# Strategy config
+strategy.json 
