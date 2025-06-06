@@ -1,6 +1,6 @@
 import json
 from rich.console import Console
-from pydantic import BaseModel, Field, conlist, confloat, validator, root_validator, ValidationError
+from pydantic import BaseModel, Field, confloat, validator, model_validator, ValidationError
 from typing import List, Optional, Dict
 
 log = Console()
@@ -28,18 +28,25 @@ class NoiseProfileConfig(BaseModel):
         return v
 
 class TimeWindowsConfig(BaseModel):
-    active_hours: conlist(int, min_items=2, max_items=2)
+    active_hours: List[int]
     weekend_bias: confloat(ge=0, le=1)
+
+    @validator('active_hours')
+    def check_active_hours(cls, v):
+        if not (isinstance(v, list) and len(v) == 2 and all(isinstance(h, int) and 0 <= h < 24 for h in v)):
+            raise ValueError('active_hours must be a list of two ints between 0 and 23')
+        return v
 
 class DistributionConfig(BaseModel):
     type: str
-    destination_address: Optional[str]
-    amount_bnb: Optional[float]
-    amount_pct: Optional[float]
+    destination_address: Optional[str] = None
+    amount_bnb: Optional[float] = None
+    amount_pct: Optional[float] = None
 
-    @root_validator
+    @model_validator(mode='after')
     def check_amount(cls, values):
-        if values.get('amount_bnb') is None and values.get('amount_pct') is None:
+        # Asegura que se especifique al menos amount_bnb o amount_pct
+        if values.amount_bnb is None and values.amount_pct is None:
             raise ValueError('Must specify amount_bnb or amount_pct')
         return values
 
