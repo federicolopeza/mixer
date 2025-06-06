@@ -49,11 +49,15 @@ async def async_main():
     if monto_depositado <= 0:
         exit(1)
 
+    # Propagar el monto depositado hacia la configuración para cálculos basados en porcentaje
+    config['deposit_amount_bnb'] = monto_depositado
+
     final_wallets, password = gather_user_inputs(config)
 
     log.rule("[bold blue]🚀 Iniciando Orquestación")
     
-    await orquestador_epico(web3, config, wallets, final_wallets)
+    # Ejecutar orquestador y capturar log de transacciones para advanced reporting
+    tx_report = await orquestador_epico(web3, config, wallets, final_wallets)
     
     # Preparar y guardar el reporte final
     report_data = {
@@ -67,7 +71,9 @@ async def async_main():
         "generated_wallets_details": {
             "strategy_leg_wallets": [w.address for w in wallets['estrategia']],
             "storm_wallets": [w.address for w in wallets['tormenta']]
-        }
+        },
+        # Datos avanzados de transacciones
+        "tx_report": tx_report
     }
     exportar_reporte_encriptado(report_data, password)
     
