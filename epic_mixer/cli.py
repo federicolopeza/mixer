@@ -61,7 +61,19 @@ def gather_user_inputs(config: dict) -> tuple:
     log.rule("[bold yellow]Confirmación Final")
     log.print(f"Estrategia: [cyan]{config['strategy_description']}[/cyan]")
     log.print(f"Wallets finales: {len(final_wallets)}")
-    log.print(f"Red: [cyan]{config['network'].upper()}[/cyan]")
+    # Resumen de módulos avanzados
+    if config.get('bridges'):
+        names = [b['name'] for b in config['bridges']]
+        log.print(f"Puentes cross-chain: [green]{', '.join(names)}[/green]")
+    if config.get('dex_swaps'):
+        routers = [d['router'] for d in config['dex_swaps']]
+        log.print(f"Swaps DEX: [green]{', '.join(routers)}[/green]")
+    if config.get('noise_profile'):
+        ntx = config['noise_profile'].get('n_micro_txs', {})
+        log.print(f"Ruido: {ntx.get('min')}–{ntx.get('max')} micro-txs")
+    if config.get('time_windows'):
+        tw = config['time_windows']
+        log.print(f"Ventanas temporales: horas {tw.get('active_hours')} con weekend_bias {tw.get('weekend_bias')}")
 
     if not Confirm.ask("[bold yellow]¿Iniciar la ejecución de la estrategia?", default=False):
         log.print("Operación cancelada.")
