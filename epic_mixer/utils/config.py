@@ -51,11 +51,11 @@ class DistributionConfig(BaseModel):
         return values
 
 class StrategyConfig(BaseModel):
-    strategy_description: Optional[str]
+    strategy_description: Optional[str] = None
     bridges: List[BridgeConfig] = []
     dex_swaps: List[DexSwapConfig] = []
-    noise_profile: Optional[NoiseProfileConfig]
-    time_windows: Optional[TimeWindowsConfig]
+    noise_profile: Optional[NoiseProfileConfig] = None
+    time_windows: Optional[TimeWindowsConfig] = None
     distribution: List[DistributionConfig] = []
     wallets_in_storm: int = 20
     mixing_rounds: int = 15
