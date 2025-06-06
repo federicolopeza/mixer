@@ -42,7 +42,7 @@ graph TD
         RUN[▶️ run_mixer.py]
 
         subgraph "Paquete epic_mixer"
-            MAIN[🎬 main.py<br/>(El Director)]
+            MAIN["🎬 main.py<br/>(El Director)"]
             subgraph "Módulos de Utilidades"
                 CONF[📄 utils/config.py]
                 REP[📦 utils/reporting.py]
@@ -222,4 +222,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - consulta el archivo [LICENSE](LICENSE) para más detalles.
