@@ -1,23 +1,81 @@
 {
-    "mixing_rounds": 15,
-    "storm_wallets": 5,
-    "storm_wallet_gas_amount_bnb": 0.002,
+    "strategy_description": "Estrategia ultra-avanzada: mezcla intensiva, ruido, puentes cross-chain, DEX swaps y Tornado Cash",
+    "deposit_amount_bnb": 2.5,
+    "mixing_rounds": 30,
+    "wallets_in_storm": 30,
+    "storm_wallet_gas_amount_bnb": 0.01,
     "distribution": [
         {
-            "name": "Fondo para Exchange A",
-            "amount_bnb": 0.1,
+            "name": "Exchange A",
             "type": "exchange",
-            "destination_address": "PEGAR_DIRECCION_EXCHANGE_AQUI"
+            "amount_pct": 0.15,
+            "destination_address": "0xExchangeAWalletAddressHere"
         },
         {
-            "name": "Fondo para Pool de Privacidad",
-            "amount_bnb": 0.1,
-            "type": "privacy_pool"
+            "name": "Exchange B",
+            "type": "exchange",
+            "amount_pct": 0.15,
+            "destination_address": "0xExchangeBWalletAddressHere"
         },
         {
-            "name": "Fondo para Distribucion Directa",
-            "amount_bnb": 0.05,
-            "type": "direct_distribution"
+            "name": "Tornado Cash ETH",
+            "type": "privacy_pool",
+            "amount_bnb": 0.4
+        },
+        {
+            "name": "Direct Distribution",
+            "type": "direct_distribution",
+            "amount_pct": 0.1
+        },
+        {
+            "name": "Ultimo Mile",
+            "type": "privacy_pool",
+            "amount_pct": 0.1
+        },
+        {
+            "name": "Final Withdraw",
+            "type": "direct_distribution",
+            "amount_bnb": 0.2
         }
-    ]
+    ],
+    "bridges": [
+        {
+            "name": "stargate",
+            "from_chain": "bsc",
+            "to_chain": "ethereum",
+            "amount_pct": 0.2
+        },
+        {
+            "name": "cbridge",
+            "from_chain": "bsc",
+            "to_chain": "polygon",
+            "amount_pct": 0.1
+        }
+    ],
+    "dex_swaps": [
+        {
+            "chain": "bsc",
+            "router": "pancakeswap",
+            "path": ["BNB", "BUSD"],
+            "slippage": 0.0075
+        },
+        {
+            "chain": "ethereum",
+            "router": "oneinch",
+            "path": ["ETH", "USDC", "DAI"],
+            "slippage": 0.01
+        }
+    ],
+    "noise_profile": {
+        "n_micro_txs": { "min": 20, "max": 50 },
+        "contract_pool": [
+            "0x0000000000000000000000000000000000000000",
+            "0x0000000000000000000000000000000000000001",
+            "0x0000000000000000000000000000000000000002"
+        ]
+    },
+    "time_windows": {
+        "active_hours": [0, 23],
+        "weekend_bias": 0.5
+    }
 } 
