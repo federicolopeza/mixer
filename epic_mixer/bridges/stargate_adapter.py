@@ -5,6 +5,7 @@ import aiohttp
 
 console = Console()
 
+
 class StargateAdapter(BaseBridgeAdapter):
     name = "stargate"
 
@@ -17,7 +18,9 @@ class StargateAdapter(BaseBridgeAdapter):
         dest_address: str,
     ) -> str:
         """Inicia un puente cross-chain usando Stargate (LayerZero)."""
-        console.print(f"[magenta]🔗 Iniciando puente Stargate: {amount_wei} wei de {source_wallet.address} a {dest_address} en {to_chain}.")
+        console.print(
+            f"[magenta]🔗 Iniciando puente Stargate: {amount_wei} wei de {source_wallet.address} a {dest_address} en {to_chain}."
+        )
         # TODO: Implementar integración con la API de Stargate
         async with aiohttp.ClientSession() as session:
             # payload = {...}
@@ -26,4 +29,4 @@ class StargateAdapter(BaseBridgeAdapter):
             pass
         fake_hash = "0x" + "s" * 64
         console.print(f"[green]✅ Puente Stargate simulado. Ref: {fake_hash}")
-        return fake_hash 
+        return fake_hash

@@ -3,6 +3,7 @@ from rich.console import Console
 
 console = Console()
 
+
 class BaseBridgeAdapter(ABC):
     name: str = "base"
 
@@ -16,4 +17,4 @@ class BaseBridgeAdapter(ABC):
         dest_address: str,
     ) -> str:
         """Realiza la operación de puente y devuelve un hash/reference."""
-        raise NotImplementedError 
+        raise NotImplementedError

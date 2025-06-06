@@ -1,6 +1,7 @@
 import pytest
 from epic_mixer.bridges.cbridge_adapter import CBridgeAdapter
 
+
 @pytest.mark.asyncio
 async def test_cbridge_adapter_returns_fake_hash():
     adapter = CBridgeAdapter()
@@ -12,4 +13,4 @@ async def test_cbridge_adapter_returns_fake_hash():
     assert isinstance(txh, str)
     assert txh.startswith("0x")
     # Verificar que el hash está compuesto por 'c'
-    assert all(ch == 'c' for ch in txh[2:]) 
+    assert all(ch == "c" for ch in txh[2:])

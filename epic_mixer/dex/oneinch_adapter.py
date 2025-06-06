@@ -4,8 +4,10 @@ import aiohttp
 
 console = Console()
 
+
 class OneInchAdapter:
     """Adaptador para ejecutar swaps vía API 1inch."""
+
     name = "1inch"
 
     async def swap(
@@ -14,9 +16,11 @@ class OneInchAdapter:
         source_wallet,
         amount_wei: int,
         path: list,
-        slippage: float
+        slippage: float,
     ) -> str:
-        console.print(f"[magenta]🔄 Iniciando swap 1inch: {amount_wei} wei, path={path}, slippage={slippage}")
+        console.print(
+            f"[magenta]🔄 Iniciando swap 1inch: {amount_wei} wei, path={path}, slippage={slippage}"
+        )
         # TODO: llamada a 1inch API para cacular ruta y datos de tx
         async with aiohttp.ClientSession() as session:
             # response = await session.get(ONEINCH_API_URL, params={...})
@@ -24,4 +28,4 @@ class OneInchAdapter:
             pass
         fake_hash = "0x" + "o" * 64
         console.print(f"[green]✅ Swap 1inch simulado. Hash: {fake_hash}")
-        return fake_hash 
+        return fake_hash

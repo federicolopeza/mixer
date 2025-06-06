@@ -16,10 +16,7 @@ def setup_web3_tor(network_mode: str) -> AsyncWeb3:
 
     # Configurar conector SOCKS5 apuntando al proxy Tor local
     connector = ProxyConnector.from_url("socks5://127.0.0.1:9050")
-    provider = AsyncHTTPProvider(
-        rpc_url,
-        session_args={"connector": connector}
-    )
+    provider = AsyncHTTPProvider(rpc_url, session_args={"connector": connector})
     web3 = AsyncWeb3(provider)
     console.print(f"[green]✅ Web3 TOR configurado para la red {network_mode.upper()}")
-    return web3 
+    return web3

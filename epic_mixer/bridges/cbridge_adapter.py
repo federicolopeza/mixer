@@ -5,6 +5,7 @@ import aiohttp
 
 console = Console()
 
+
 class CBridgeAdapter(BaseBridgeAdapter):
     name = "cbridge"
 
@@ -17,7 +18,9 @@ class CBridgeAdapter(BaseBridgeAdapter):
         dest_address: str,
     ) -> str:
         """Inicia un puente cross-chain usando cBridge (Celer Network)."""
-        console.print(f"[cyan]🔗 Iniciando puente CBridge: {amount_wei} wei de {source_wallet.address} a {dest_address} en {to_chain}.")
+        console.print(
+            f"[cyan]🔗 Iniciando puente CBridge: {amount_wei} wei de {source_wallet.address} a {dest_address} en {to_chain}."
+        )
         # TODO: Implementar integración con la API de cBridge
         # Ejemplo placeholder de llamada HTTP
         async with aiohttp.ClientSession() as session:
@@ -28,4 +31,4 @@ class CBridgeAdapter(BaseBridgeAdapter):
         # Por ahora, devolvemos un hash simulado
         fake_hash = "0x" + "c" * 64
         console.print(f"[green]✅ Puente CBridge simulado. Ref: {fake_hash}")
-        return fake_hash 
+        return fake_hash
