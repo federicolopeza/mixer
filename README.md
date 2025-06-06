@@ -1,6 +1,6 @@
 # 🌪️ Epic Mixer | SuperMixer v2
 
-[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue)][python] [![License: MIT](https://img.shields.io/badge/License-MIT-green)][license] [![Estado: Experimental](https://img.shields.io/badge/Estado-Experimental-orange)]()
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue)] [![License: MIT](https://img.shields.io/badge/License-MIT-green)] [![Estado: Experimental](https://img.shields.io/badge/Estado-Experimental-orange)]()
 
 > **SuperMixer v2** es un orquestador avanzado de ofuscación de transacciones on-chain, diseñado para maximizar la privacidad y resistencia al análisis en múltiples blockchains.
 
