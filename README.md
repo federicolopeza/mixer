@@ -1,8 +1,8 @@
-# 🌪️ Epic Mixer | SuperMixer v2
+# 🌪️ SuperMixer v2
 
-[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue)] [![License: MIT](https://img.shields.io/badge/License-MIT-green)] [![Estado: Beta](https://img.shields.io/badge/Estado-Beta-blue)]()
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue)] [![License: MIT](https://img.shields.io/badge/License-MIT-green)] [![Estado: Beta](https://img.shields.io/badge/Estado-Beta-blue)] [![CI](https://github.com/Falopp/mixer/actions/workflows/static-analysis.yml/badge.svg)] [![codecov](https://codecov.io/gh/Falopp/mixer/branch/main/graph/badge.svg)]
 
-> **SuperMixer v2** es un orquestador avanzado de ofuscación de transacciones on-chain, diseñado para maximizar la privacidad y resistencia al análisis en múltiples blockchains.
+> **SuperMixer v2** es un orquestador avanzado de ofuscación de transacciones on-chain, diseñado para maximizar la privacidad, resistencia al análisis y la fiabilidad en entornos DeFi.
 
 ---
 
@@ -19,8 +19,10 @@
 10. [Variables de Entorno](#-variables-de-entorno)
 11. [Depuración y Logs](#-depuración-y-logs)
 12. [Testing](#-testing)
-13. [Contribuir](#-contribuir)
-14. [Licencia](#-licencia)
+13. [CI/CD](#-cicd)
+14. [Contribuir](#-contribuir)
+15. [Roadmap](#-roadmap)
+16. [Licencia](#-licencia)
 
 ---
 
