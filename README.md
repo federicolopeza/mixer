@@ -1,46 +1,72 @@
 # Epic Mixer 🌪️ SuperMixer v2
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-green.svg)](LICENSE)
-[![Estado: Experimental](https://img.shields.io/badge/estado-experimental-red.svg)]
+**SuperMixer v2** es un orquestador de ofuscación de transacciones diseñado para maximizar la resistencia al análisis on-chain. Combina técnicas multi-capa: financiación en cadena, tormenta caótica, puentes cross-chain, swaps en DEX, generación de ruido, planificación temporal y reporting criptográfico.
 
-Epic Mixer SuperMixer v2 es un **orquestador avanzado** de ofuscación de transacciones on-chain, diseñado para investigación, educación y competencias de privacidad en múltiples blockchains. Integra puentes cross-chain, DEX swaps, generación de ruido, planificación temporal y reporting criptográfico para maximizar la resistencia al análisis.
+## Índice
+1. [Visión General](#visión-general)
+2. [Módulos Principales](#módulos-principales)
+3. [Flujo de Ejecución](#flujo-de-ejecución)
+4. [Instalación](#instalación)
+5. [Configuración de la Estrategia](#configuración-de-la-estrategia)
+6. [Uso y Ejecución](#uso-y-ejecución)
+7. [Reporte Avanzado y Desencriptación](#reporte-avanzado-y-desencriptación)
+8. [Desafío Educativo](#desafío-educativo)
+9. [Testing](#testing)
+10. [Contribuir](#contribuir)
+11. [Licencia](#licencia)
 
-## Contenidos
-- [Características](#características)
-- [Arquitectura](#arquitectura)
-- [Instalación](#instalación)
-- [Estrategia (`strategy.json`)](#estrategia-strategyjson)
-- [Uso y Ejecución](#uso-y-ejecución)
-- [Reporte Avanzado](#reporte-avanzado)
-- [Desafío Educativo](#desafío-educativo)
-- [Testing](#testing)
-- [Contribuir](#contribuir)
-- [Licencia](#licencia)
+## Visión General
+SuperMixer v2 transforma BNB (o cualquier activo ERC-20 adaptado) a través de una serie de fases:
+- **1. Preparación**: generación de sesión efímera y derivación de wallets.
+- **2. Ruido Pre-Mezcla**: micro-transacciones y dApps populares para camuflar actividad.
+- **3. Financiación en Cadena**: rompe el patrón hub-and-spoke con transacciones escalonadas.
+- **4. Tormenta Caótica**: mezcla de fondos entre wallets de tormenta con montos aleatorios.
+- **5. Puentes Cross-Chain**: traslada fragmentos de fondos entre diferentes blockchains.
+- **6. Swaps en DEX**: intercambia activos para interrumpir relación de tokens.
+- **7. Distribución Final**: envía los fondos ofuscados a exchanges, pools o direcciones finales.
+- **8. Failover**: si algo falla, recupera todos los fondos a una vault de emergencia.
+- **9. Reporting Seguro**: genera un reporte encriptado con Merkle root y view-key.
 
-## Características
-1. **Cross-Chain Bridges**: cBridge y Stargate para mover fondos entre BSC, Polygon zkEVM, Arbitrum, etc.
-2. **DEX Swaps**: PancakeSwap v3 y 1inch API para intercambiar activos y romper patrones de volumen.
-3. **Ruido Inteligente**: micro-transacciones y llamadas a contratos populares (NFTs, staking) para camuflar actividad.
-4. **Planificación Temporal**: APScheduler para calendarizar fases con delays aleatorios y ventanas de alta actividad.
-5. **OpSec / RPC por Tor**: enruta todas las llamadas RPC a través de SOCKS5 (Tor) para anonimizar metadatos.
-6. **Failover Seguro**: recolección automática de fondos en vault de emergencia si ocurre un fallo crítico.
-7. **Advanced Reporting**: cifrado AES-GCM, Merkle proofs y view-keys para revelación selectiva de trazas.
+## Módulos Principales
+- **`core/`**: orquestación general (`orchestrator`, `wallets`, `web3_utils`).
+- **`bridges/`**: adaptadores cBridge y Stargate para puentes cross-chain.
+- **`dex/`**: adaptadores PancakeSwap y 1inch para swaps en DEX.
+- **`noise_generator.py`**: micro-transacciones y llamadas "dust".
+- **`scheduler.py`**: APScheduler para calendarizar fases con delays aleatorios.
+- **`opsec.py`**: configuración de Web3 a través de Tor (SOCKS5).
+- **`failover.py`**: recolección de fondos en vault en caso de fallo.
+- **`utils/`**:
+  - `config.py`: validación de `strategy.json`.
+  - `reporting.py`: cifrado AES-GCM del reporte.
+  - `advanced_reporting.py`: Merkle proofs y view-keys.
 
-## Arquitectura
+## Flujo de Ejecución
 ```mermaid
-graph TD
-  U[Usuario] --> CLI(CLI)
-  CLI --> ORQ[Orquestador]
-  ORQ --> NOISE[🔊 Ruido]
-  ORQ --> FUND[🔗 Financiación]
-  ORQ --> STORM[🌪️ Tormenta]
-  ORQ --> BRIDGES[🔀 Bridges]
-  ORQ --> DEX[🔄 DEX Swaps]
-  ORQ --> DIST[🚀 Distribución]
-  ORQ --> FAIL[❗ Failover]
-  ORQ --> REP[📄 Reporte Avanzado]
-```  
+sequenceDiagram
+  participant U as Usuario
+  participant CLI as CLI
+  participant ORQ as Orquestador
+  participant NOISE as Ruido
+  participant FUND as Financiación
+  participant STORM as Tormenta
+  participant BR as Bridges
+  participant DEX as Swaps DEX
+  participant DIST as Distribución
+  participant FAIL as Failover
+  participant REP as Reporting
+
+  U->>CLI: run_mixer.py
+  CLI->>ORQ: configura entorno y parámetros
+  ORQ->>NOISE: generate_noise()
+  ORQ->>FUND: financiar wallets en cadena
+  ORQ->>STORM: _ejecutar_tormenta_de_mezcla()
+  ORQ->>BR: adapter.bridge() por fragmentos
+  ORQ->>DEX: adapter.swap() en DEX
+  ORQ->>DIST: envía fondos finales
+  ORQ->>FAIL: handle_failover() si falla
+  ORQ->>REP: generar reporte encriptado + Merkle root
+  REP->>U: entrega `mixer_report_encrypted_dat`
+```
 
 ## Instalación
 ```bash
@@ -48,56 +74,40 @@ git clone <URL_REPOSITORIO>
 cd mixer
 python -m venv venv
 # Windows
-env\Scripts\activate
+venv\Scripts\activate
 # macOS/Linux
 # source venv/bin/activate
-
 pip install -r requirements.txt
 ```
 
-## Estrategia (`strategy.json`)
-Copia `strategy_v2.json.example` a `strategy.json` y personaliza:
-- **bridges**: nombre, cadenas origen/destino y `amount_pct`.
-- **dex_swaps**: `router`, `path`, `slippage`.
-- **noise_profile**: `n_micro_txs`, `contract_pool`.
-- **storm**: `wallets`, `mixing_rounds`, `gas_amount_bnb`, `time_delay_sec`.
-- **distribution**: `type` (`exchange`, `direct_distribution`), `amount_pct`, `destination_address`.
-- **time_windows**: `active_hours`, `weekend_bias`.
-- **emergency_vault_address** (opcional).
-
-Ejemplo:
-```json
-${LITERAL strategy_v2.json.example}
-```
+## Configuración de la Estrategia
+1. Copia `strategy_v2.json.example` a `strategy.json`.
+2. Ajusta campos:
+   - `bridges`, `dex_swaps`, `noise_profile`, `storm`, `distribution`, `time_windows`.
+   - Opcional: `emergency_vault_address`.
 
 ## Uso y Ejecución
-1. Asegúrate de tener Tor en `127.0.0.1:9050` (para OpSec).
-2. Ejecuta:
-   ```bash
-   python run_mixer.py --network testnet
-   ```
-3. Sigue las indicaciones: direcciones de exchange, wallets finales y contraseña.
-4. Al finalizar, recibirás:
-   - `mixer_report_encrypted_<timestamp>.dat` (reporte cifrado).
-   - En consola, la raíz Merkle asociada a las transacciones.
-
-## Reporte Avanzado
-El reporte JSON incluye:
-- `session_details`: mnemónico, dirección de depósito y monto.
-- `strategy_used`: configuración completa.
-- `tx_report`: hashes de puentes y swaps, y `merkle_root`.
-
-Para desencriptar:
 ```bash
-python decryption-tool.py <ruta_al_dat>
+python run_mixer.py --network testnet
 ```
+Sigue las indicaciones: exchange, wallets finales y contraseña.  
+Al terminar, obtendrás:
+- `mixer_report_encrypted_<timestamp>.dat`  
+- Merkle root impreso en consola.
+
+## Reporte Avanzado y Desencriptación
+- **Reporte JSON**: incluye detalles de sesión, configuración y `tx_report` con hashes y `merkle_root`.
+- **Desencriptar**:
+  ```bash
+  python decryption-tool.py mixer_report_encrypted_<timestamp>.dat
+  ```
 
 ## Desafío Educativo
-**$10,000 Epic Trace Challenge**: publica únicamente hash inicial y dirección.
-Participantes deben presentar:
-- Caminos de transacciones (hash + direcciones).
-- Metodología reproducible (scripts o gráficos).
-- Pruebas Merkle o view-keys.
+**$10,000 Epic Trace Challenge**: publica solo hash inicial y dirección.  
+Participantes presentan:
+- Camino de transacciones (hashes + direcciones).  
+- Metodología y pruebas Merkle o view-keys.  
+Ganador recibe premio en USDC.
 
 ## Testing
 ```bash
@@ -105,8 +115,8 @@ python -m pytest -q
 ```
 
 ## Contribuir
-Pull requests e issues son bienvenidos. Sigue Conventional Commits:
-- `feat()`, `fix()`, `docs()`, `test()`.
+Pull requests e issues son bienvenidos. Utiliza Conventional Commits:
+- `feat()`, `fix()`, `docs()`, `test()`, etc.
 
 ## Licencia
-Este proyecto está bajo licencia **MIT**. Consulta `LICENSE` para más detalles.
+MIT © Epic Mixer Developers
