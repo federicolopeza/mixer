@@ -1,6 +1,6 @@
 # 🌪️ Epic Mixer | SuperMixer v2
 
-[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue)] [![License: MIT](https://img.shields.io/badge/License-MIT-green)] [![Estado: Experimental](https://img.shields.io/badge/Estado-Experimental-orange)]()
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue)] [![License: MIT](https://img.shields.io/badge/License-MIT-green)] [![Estado: Beta](https://img.shields.io/badge/Estado-Beta-blue)]()
 
 > **SuperMixer v2** es un orquestador avanzado de ofuscación de transacciones on-chain, diseñado para maximizar la privacidad y resistencia al análisis en múltiples blockchains.
 
@@ -177,3 +177,25 @@ class MiBridgeAdapter(BaseBridgeAdapter):
 - `LOG_LEVEL`: nivel de logging (`DEBUG`, `INFO`, `WARN`, `ERROR`).
 
 ---
+
+## 📑 Roadmap
+Consulta el plan de mejoras y estado actual en [ROADMAP.md](ROADMAP.md).
+
+## 🧪 Testing
+Ejecuta la suite de tests:
+```bash
+pytest --maxfail=1 --disable-warnings -v
+```
+
+## 🤖 CI/CD
+Se ha integrado un workflow de GitHub Actions para análisis estático (Flake8, Pylint, Mypy, Bandit) en:
+`.github/workflows/static-analysis.yml`.
+
+## 🤝 Contribuir
+1. Realiza un fork del repositorio.
+2. Crea una rama `feat/...` o `fix/...` con tus cambios.
+3. Asegúrate de pasar los tests y CI.
+4. Envía un Pull Request describiendo tus cambios.
+
+## 📜 Licencia
+Este proyecto está bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
