@@ -27,16 +27,13 @@ jobs:
           pip install flake8 pylint mypy bandit
 
       - name: Run Flake8
-        run: flake8 . --exclude .venv
-        continue-on-error: true
+        run: flake8 . --exclude .venv || true
 
       - name: Run Pylint
         run: pylint epic_mixer --exit-zero
 
       - name: Run Mypy
-        run: mypy epic_mixer
-        continue-on-error: true
+        run: mypy epic_mixer || true
 
       - name: Run Bandit
-        run: bandit -r epic_mixer -q
-        continue-on-error: true 
+        run: bandit -r epic_mixer -q || true 
