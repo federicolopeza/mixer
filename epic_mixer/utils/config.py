@@ -1,7 +1,61 @@
 import json
 from rich.console import Console
+from pydantic import BaseModel, Field, conlist, confloat, validator, root_validator, ValidationError
+from typing import List, Optional, Dict
 
 log = Console()
+
+class BridgeConfig(BaseModel):
+    name: str
+    from_chain: str
+    to_chain: str
+    amount_pct: confloat(ge=0, le=1)
+
+class DexSwapConfig(BaseModel):
+    chain: str
+    router: str
+    path: List[str]
+    slippage: confloat(ge=0, le=1)
+
+class NoiseProfileConfig(BaseModel):
+    n_micro_txs: Dict[str, int]
+    contract_pool: List[str] = []
+
+    @validator('n_micro_txs')
+    def check_n_micro_txs(cls, v):
+        if not (v.get('min') is not None and v.get('max') is not None and v['min'] <= v['max']):
+            raise ValueError('n_micro_txs must have min <= max')
+        return v
+
+class TimeWindowsConfig(BaseModel):
+    active_hours: conlist(int, min_items=2, max_items=2)
+    weekend_bias: confloat(ge=0, le=1)
+
+class DistributionConfig(BaseModel):
+    type: str
+    destination_address: Optional[str]
+    amount_bnb: Optional[float]
+    amount_pct: Optional[float]
+
+    @root_validator
+    def check_amount(cls, values):
+        if values.get('amount_bnb') is None and values.get('amount_pct') is None:
+            raise ValueError('Must specify amount_bnb or amount_pct')
+        return values
+
+class StrategyConfig(BaseModel):
+    strategy_description: Optional[str]
+    bridges: List[BridgeConfig] = []
+    dex_swaps: List[DexSwapConfig] = []
+    noise_profile: Optional[NoiseProfileConfig]
+    time_windows: Optional[TimeWindowsConfig]
+    distribution: List[DistributionConfig] = []
+    wallets_in_storm: int = 20
+    mixing_rounds: int = 15
+    storm_wallet_gas_amount_bnb: float = 0.002
+
+    class Config:
+        extra = 'allow'
 
 def load_strategy(strategy_file: str) -> dict:
     """Carga y valida el archivo de configuración de la estrategia."""
@@ -21,57 +75,14 @@ def load_strategy(strategy_file: str) -> dict:
             # Cantidad de gas a fondear por wallet de tormenta (en BNB)
             config.setdefault('storm_wallet_gas_amount_bnb', storm_cfg.get('gas_amount_bnb', 0.002))
 
-        # Validar el schema completo de la estrategia
-        def is_addr(addr: str) -> bool:
-            from epic_mixer.core.web3_utils import es_direccion_valida
-            return es_direccion_valida(addr)
-
-        # Validar bridges
-        for b in config.get('bridges', []):
-            if not all(k in b for k in ('name', 'from_chain', 'to_chain', 'amount_pct')):
-                log.print(f"[bold red]❌ Bridge inválido: {b}")
-                exit(1)
-        # Validar dex_swaps
-        for d in config.get('dex_swaps', []):
-            if not all(k in d for k in ('chain', 'router', 'path', 'slippage')):
-                log.print(f"[bold red]❌ DEX swap inválido: {d}")
-                exit(1)
-            if not isinstance(d['path'], list) or d['slippage'] < 0 or d['slippage'] > 1:
-                log.print(f"[bold red]❌ Configuración DEX incorrecta: {d}")
-                exit(1)
-        # Validar ruido
-        noise = config.get('noise_profile', {})
-        if noise:
-            n_txs = noise.get('n_micro_txs', {})
-            if not (isinstance(n_txs.get('min',0), int) and isinstance(n_txs.get('max',0), int) and n_txs['min'] <= n_txs['max']):
-                log.print(f"[bold red]❌ Noise profile inválido: {noise}")
-                exit(1)
-            for c in noise.get('contract_pool', []):
-                # pueden ser direcciones o nombres de contrato
-                pass
-        # Validar time_windows
-        tw = config.get('time_windows', {})
-        if tw:
-            ah = tw.get('active_hours', [])
-            wb = tw.get('weekend_bias', 0)
-            if not (isinstance(ah, list) and len(ah)==2 and all(isinstance(h,int) and 0<=h<24 for h in ah)):
-                log.print(f"[bold red]❌ time_windows inválido: {tw}")
-                exit(1)
-            if not (isinstance(wb, (int,float)) and 0<=wb<=1):
-                log.print(f"[bold red]❌ weekend_bias inválido: {wb}")
-                exit(1)
-        # Validar distribution
-        for leg in config.get('distribution', []):
-            if leg.get('type')=='exchange':
-                addr = leg.get('destination_address')
-                if not addr or not is_addr(addr):
-                    log.print(f"[bold red]❌ Dirección de exchange inválida: {leg}")
-                    exit(1)
-            if not ('amount_bnb' in leg or 'amount_pct' in leg):
-                log.print(f"[bold red]❌ Debe especificar amount_bnb o amount_pct en: {leg}")
-                exit(1)
-        log.print(f"[green]✅ Estrategia '{config.get('strategy_description', 'N/A')}' validada y cargada desde '{strategy_file}'.")
-        return config
+        # Validar con Pydantic
+        try:
+            cfg = StrategyConfig.parse_obj(config)
+        except ValidationError as e:
+            log.print(f"[bold red]❌ Error en validación de estrategia:\n{e}")
+            exit(1)
+        log.print(f"[green]✅ Estrategia '{cfg.strategy_description or 'N/A'}' validada y cargada.")
+        return cfg.dict()
     except FileNotFoundError:
         log.print(f"[bold red]❌ Archivo de estrategia '{strategy_file}' no encontrado.")
         log.print("[bold yellow]Asegúrate de tener un archivo de estrategia (puedes copiar 'strategy.json.example' a 'strategy.json').")
