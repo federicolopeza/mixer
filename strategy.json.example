@@ -1,0 +1,25 @@
+{
+    "strategy_description": "Mezcla de 5 BNB usando 1 exchange, 1 pool de privacidad simulado y distribución final a 3 wallets.",
+    "wallets_in_storm": 30,
+    "mixing_rounds": 7,
+    "distribution": [
+        {
+            "type": "exchange",
+            "name": "KuCoin_Deposit_1",
+            "amount_bnb": 2.0,
+            "destination_address": "AQUI_PEGAS_TU_DIRECCION_DE_DEPOSITO_DEL_EXCHANGE"
+        },
+        {
+            "type": "privacy_pool",
+            "name": "Tornado_BSC_Sim",
+            "amount_bnb": 2.0,
+            "destination_address": "GENERADA_POR_SCRIPT"
+        },
+        {
+            "type": "direct_distribution",
+            "name": "Resto_Fragmentado",
+            "amount_bnb": "REMAINING",
+            "destination_address": "DISTRIBUIDO_A_WALLETS_FINALES"
+        }
+    ]
+} 
