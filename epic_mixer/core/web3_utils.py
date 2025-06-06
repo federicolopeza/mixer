@@ -6,12 +6,12 @@ import qrcode
 from rich.console import Console
 from rich.spinner import Spinner
 from web3 import Web3, AsyncWeb3
-from web3.providers.async_http import AsyncHTTPProvider
+from web3 import AsyncHTTPProvider
 
 log = Console()
 
 # CONSTANTES
-GAS_LIMIT = 21000
+# GAS_LIMIT = 21000 # Eliminado para usar estimación dinámica
 DEPOSIT_TIMEOUT_MINS = 30
 RPC_URLS = {
     "testnet": "https://data-seed-prebsc-1-s1.binance.org:8545",
@@ -65,13 +65,48 @@ async def esperar_deposito(web3: AsyncWeb3, deposit_address: str) -> float:
                 log.print(f"Error al consultar balance: {e}")
                 await asyncio.sleep(15)
 
-async def enviar_transaccion(web3: AsyncWeb3, tx_params: Dict[str, Any], sender_key: str):
-    """Firma y envía una única transacción, manejando errores."""
+async def enviar_transaccion(
+    web3: AsyncWeb3, 
+    tx_params: Dict[str, Any], 
+    sender_key: str,
+    gas_price_multiplier: float = 1.0,
+    nonce: int = None
+):
+    """Firma y envía una única transacción, manejando errores y gas dinámico."""
     try:
+        # 1. Asignar 'from' si no está presente
+        if 'from' not in tx_params:
+            account = web3.eth.account.from_key(sender_key)
+            tx_params['from'] = account.address
+            
+        # 2. Gestionar Nonce
+        if nonce is None:
+            tx_params['nonce'] = await web3.eth.get_transaction_count(tx_params['from'])
+        else:
+            tx_params['nonce'] = nonce
+
+        # 3. Gestionar Precio del Gas (con aleatorización)
+        if 'gasPrice' not in tx_params:
+            base_gas_price = await web3.eth.gas_price
+            tx_params['gasPrice'] = int(base_gas_price * gas_price_multiplier)
+
+        # 4. Estimar Gas si no se provee
+        if 'gas' not in tx_params:
+            tx_params['gas'] = await web3.eth.estimate_gas(tx_params)
+
         signed_tx = web3.eth.account.sign_transaction(tx_params, sender_key)
         tx_hash = await web3.eth.send_raw_transaction(signed_tx.raw_transaction)
-        log.print(f"[grey50]TX enviada desde {tx_params['from'][:10]}... a {tx_params['to'][:10]}... Hash: {tx_hash.hex()}", highlight=False)
-        return tx_hash
+        
+        # Esperar el recibo para confirmar la transacción
+        receipt = await web3.eth.wait_for_transaction_receipt(tx_hash)
+        
+        if receipt.status == 1:
+            log.print(f"[grey50]TX exitosa desde {tx_params['from'][:10]}... a {tx_params['to'][:10]}... Hash: {tx_hash.hex()}", highlight=False)
+        else:
+            log.print(f"[bold red]❌ La transacción falló (revertida) desde {tx_params['from'][:10]}. Hash: {tx_hash.hex()}")
+
+        return tx_hash, receipt
+    
     except Exception as e:
-        log.print(f"[bold red]❌ Error en TX desde {tx_params['from'][:10]}: {e}")
-        return None 
+        log.print(f"[bold red]❌ Error en TX desde {tx_params.get('from', 'N/A')[:10]}: {e}")
+        return None, None 
