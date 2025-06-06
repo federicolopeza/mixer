@@ -33,52 +33,65 @@ Epic Mixer no es un simple "tumbler". Es un **orquestador** que tú diriges. La 
 
 ```mermaid
 graph LR
-    subgraph "Fase 1: Preparación"
+    subgraph "🔧 Fase 1: Preparación del Sistema"
         direction TB
-        U[👨‍💻 Usuario] -- Ejecuta --> RUN(▶️ run_mixer.py)
-        RUN -- Inicia --> MAIN{🎬 main.py}
-        MAIN -- Carga --> CONF([📄 strategy.json])
-        MAIN -- Crea Sesión --> WLT([🔑 core/wallets.py])
+        U[👨‍💻 Usuario] -.->|"ejecuta comando"| RUN(▶️ run_mixer.py)
+        RUN -->|"inicia orquestador"| MAIN{🎬 main.py<br/>Director Central}
+        MAIN -->|"lee configuración"| CONF([📄 strategy.json<br/>Plan de Mezcla])
+        MAIN -->|"genera sesión efímera"| WLT([🔑 Generador de Wallets<br/>⚡ Temporales])
+        WLT -.->|"mnemónico + direcciones"| TEMP[(🗃️ Sesión Temporal)]
     end
 
-    subgraph "Fase 2: Depósito de Fondos"
+    subgraph "💰 Fase 2: Recepción Segura de Fondos"
         direction TB
-        PREP[Fase 1] --> FDEP[Fase 2]
-        MAIN -- Espera Depósito --> W3U([🔗 core/web3_utils.py])
-        W3U -- Muestra Dirección/QR --> U
-        U -- Envía BNB --> BLOCKCHAIN[(🌐 Binance Smart Chain)]
-        BLOCKCHAIN -- Fondos Detectados --> W3U
+        TEMP -.->|"dirección de depósito"| W3U([🔗 Monitor Blockchain<br/>Detecta Transacciones])
+        W3U -->|"muestra QR + dirección"| DISPLAY[📱 Código QR<br/>+ Dirección BSC]
+        DISPLAY -.->|"usuario escanea/copia"| U
+        U -->|"envía BNB desde wallet externa"| BLOCKCHAIN[(🌐 Binance Smart Chain<br/>Red Pública)]
+        BLOCKCHAIN -->|"transacción detectada ✅"| W3U
+        W3U -.->|"fondos confirmados"| BALANCE[💎 Fondos Seguros<br/>En Wallet Temporal]
     end
     
-    subgraph "Fase 3: Configuración Interactiva"
+    subgraph "⚙️ Fase 3: Configuración Interactiva"
         direction TB
-        FDEP --> FCONF[Fase 3]
-        W3U -- Notifica --> MAIN
-        MAIN -- Pide Datos Sensibles --> CLI([🗣️ cli.py])
-        CLI -- Pregunta Destinos y Contraseña --> U
-        U -- Introduce Datos --> CLI
+        BALANCE -.->|"fondos listos"| MAIN
+        MAIN -->|"solicita configuración"| CLI([🗣️ Interfaz Interactiva<br/>Recopila Destinos])
+        CLI -->|"pregunta direcciones exchange"| PROMPT1[❓ Direcciones de Exchange<br/>para Distribución]
+        CLI -->|"pregunta wallets finales"| PROMPT2[❓ Wallets de Destino Final<br/>del Usuario]
+        CLI -->|"solicita contraseña segura"| PROMPT3[🔐 Contraseña de Encriptación<br/>para Reporte]
+        PROMPT1 & PROMPT2 & PROMPT3 -.->|"datos sensibles"| U
+        U -.->|"introduce información"| CLI
+        CLI -.->|"configuración completa"| CONFIG[⚡ Plan de Ejecución<br/>Listo para Orquestación]
     end
 
-    subgraph "Fase 4: Orquestación y Reporte Final"
+    subgraph "🌪️ Fase 4: Ejecución y Reporte Final"
         direction TB
-        FCONF --> FORCH[Fase 4]
-        CLI -- Devuelve Datos --> MAIN
-        MAIN -- Inicia Mezcla --> ORCH([🌪️ core/orchestrator.py])
-        ORCH -- Ejecuta Estrategia --> BLOCKCHAIN
-        ORCH -- Notifica Finalización --> MAIN
-        MAIN -- Crea Reporte --> REP([📦 utils/reporting.py])
-        REP -- Guarda y Encripta --> OUT([📄 reporte_encriptado.dat])
+        CONFIG -.->|"inicia ejecución"| MAIN
+        MAIN -->|"delega orquestación"| ORCH([🎭 Orquestador Épico<br/>Motor de Mezcla])
+        ORCH -->|"fragmenta y distribuye"| MULTI[🔀 Distribución Multi-Brazo<br/>Exchanges + Pools + Directa]
+        MULTI -->|"ejecuta transacciones"| BLOCKCHAIN
+        BLOCKCHAIN -.->|"confirmaciones de red"| ORCH
+        ORCH -.->|"ejecución completada ✅"| MAIN
+        MAIN -->|"genera reporte detallado"| REP([📊 Generador de Reportes<br/>Recopila Todos los Datos])
+        REP -->|"encripta con contraseña"| OUT([📄 Archivo Encriptado<br/>reporte_encriptado.dat])
+        OUT -.->|"reporte seguro guardado"| U
     end
     
-    %% Estilos para mejorar la legibilidad visual
+    %% Estilos para diferencia visual clara
+    style U fill:#3B4252,stroke:#81A1C1,color:#ECEFF4,stroke-width:3px
+    style BLOCKCHAIN fill:#A3BE8C,stroke:#4C566A,color:#2E3440,stroke-width:3px
+    style RUN fill:#BF616A,stroke:#D8DEE9,color:#ECEFF4
+    style OUT fill:#EBCB8B,stroke:#4C566A,color:#2E3440
+    style TEMP fill:#B48EAD,stroke:#4C566A,color:#ECEFF4
+    style BALANCE fill:#88C0D0,stroke:#4C566A,color:#2E3440
+    style CONFIG fill:#D08770,stroke:#4C566A,color:#ECEFF4
+    style MULTI fill:#A3BE8C,stroke:#4C566A,color:#2E3440
+    
+    %% Estilos de las fases
     style U fill:#3B4252,stroke:#81A1C1,color:#ECEFF4
     style BLOCKCHAIN fill:#A3BE8C,stroke:#4C566A,color:#2E3440
     style RUN fill:#BF616A,stroke:#D8DEE9,color:#ECEFF4
     style OUT fill:#EBCB8B,stroke:#4C566A,color:#2E3440
-    style PREP fill:#2E3440,stroke:#5E81AC
-    style FDEP fill:#2E3440,stroke:#5E81AC
-    style FCONF fill:#2E3440,stroke:#5E81AC
-    style FORCH fill:#2E3440,stroke:#5E81AC
 ```
 
 ---
