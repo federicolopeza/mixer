@@ -1,5 +1,7 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import random
+import secrets
+sr = secrets.SystemRandom()
 from datetime import datetime, timedelta
 from rich.console import Console
 
@@ -30,7 +32,7 @@ class MixerScheduler:
         Devuelve la fecha y hora programada.
         """
         args = args or []
-        delay = random.uniform(min_delay_sec, max_delay_sec)
+        delay = sr.uniform(min_delay_sec, max_delay_sec)
         run_time = datetime.now() + timedelta(seconds=delay)
         console.print(f"[yellow]⏱ Programando fase '{phase_name}' en {delay:.1f}s (ejecución: {run_time}).")
         self.scheduler.add_job(

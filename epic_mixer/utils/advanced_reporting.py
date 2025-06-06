@@ -1,7 +1,7 @@
 import hashlib
 from typing import List, Dict
-from Crypto.Random import get_random_bytes
-from Crypto.Cipher import AES
+import os
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 
 def _hash_pair(a: bytes, b: bytes) -> bytes:
@@ -55,26 +55,26 @@ def generate_merkle_proof(leaves: List[str], index: int) -> List[str]:
 
 def generate_view_key() -> bytes:
     """Genera una clave aleatoria para cifrar/revelar proofs selectivamente."""
-    return get_random_bytes(32)
+    return os.urandom(32)
 
 
 def encrypt_proof(proof: List[str], view_key: bytes) -> bytes:
     """Encripta el proof JSON con AES-GCM."""
     import json
-    from Crypto.Cipher import AES
-
+    # AES-GCM encryption using cryptography
+    aesgcm = AESGCM(view_key)
+    nonce = os.urandom(12)
     plaintext = json.dumps(proof).encode('utf-8')
-    cipher = AES.new(view_key, AES.MODE_GCM)
-    ciphertext, tag = cipher.encrypt_and_digest(plaintext)
-    return cipher.nonce + tag + ciphertext
+    ciphertext = aesgcm.encrypt(nonce, plaintext, None)
+    return nonce + ciphertext
 
 
 def decrypt_proof(encrypted: bytes, view_key: bytes) -> List[str]:
     """Desencripta el proof usando AES-GCM."""
     import json
-    nonce = encrypted[:16]
-    tag = encrypted[16:32]
-    ciphertext = encrypted[32:]
-    cipher = AES.new(view_key, AES.MODE_GCM, nonce=nonce)
-    plaintext = cipher.decrypt_and_verify(ciphertext, tag)
+    # AES-GCM decryption using cryptography
+    aesgcm = AESGCM(view_key)
+    nonce = encrypted[:12]
+    ciphertext = encrypted[12:]
+    plaintext = aesgcm.decrypt(nonce, ciphertext, None)
     return json.loads(plaintext.decode('utf-8')) 

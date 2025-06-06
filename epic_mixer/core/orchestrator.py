@@ -1,9 +1,11 @@
 import asyncio
 import random
+import secrets
+sr = secrets.SystemRandom()
 from typing import Dict, List, Any
 from rich.console import Console
 from web3 import Web3, AsyncWeb3
-from .web3_utils import enviar_transaccion, GAS_LIMIT
+from .web3_utils import enviar_transaccion
 from epic_mixer.noise_generator import generate_noise
 from epic_mixer.failover import handle_failover
 from epic_mixer.bridges import get_bridge_adapter
@@ -12,7 +14,11 @@ from epic_mixer.utils.advanced_reporting import generate_merkle_root
 
 log = Console()
 
-async def _ejecutar_tormenta_de_mezcla(web3: AsyncWeb3, config: Dict, wallets: Dict):
+async def _ejecutar_tormenta_de_mezcla(
+    web3: AsyncWeb3,
+    config: Dict[str, Any],
+    wallets: Dict[str, Any]
+) -> None:
     """Ejecuta la tormenta de transacciones entre las wallets de tormenta."""
     log.rule(f"[bold magenta]🌪️ 2. Ejecutando Tormenta de Mezcla ({config['mixing_rounds']} rondas)")
     wallets_tormenta = wallets['tormenta']
@@ -24,7 +30,7 @@ async def _ejecutar_tormenta_de_mezcla(web3: AsyncWeb3, config: Dict, wallets: D
         balance = await web3.eth.get_balance(wallet_estrategia.address)
         if balance > 0:
             # Distribuye a una wallet de tormenta aleatoria
-            wallet_tormenta_destino = random.choice(wallets_tormenta)
+            wallet_tormenta_destino = sr.choice(wallets_tormenta)
             tx_params = {'to': wallet_tormenta_destino.address, 'value': balance}
             tasks.append(enviar_transaccion(web3, tx_params, wallet_estrategia.key))
 
@@ -45,22 +51,22 @@ async def _ejecutar_tormenta_de_mezcla(web3: AsyncWeb3, config: Dict, wallets: D
             log.print("[yellow]No hay suficientes wallets con fondos para continuar la tormenta.")
             break
 
-        origen = random.choice(wallets_con_fondos)
-        destino = random.choice([w for w in wallets_con_fondos if w.address != origen.address])
+        origen = sr.choice(wallets_con_fondos)
+        destino = sr.choice([w for w in wallets_con_fondos if w.address != origen.address])
         
         balance_origen_wei = await web3.eth.get_balance(origen.address)
         # Dejar algo de gas, enviar un % aleatorio del resto
         gas_fee_estimada = Web3.to_wei('0.001', 'ether')
-        monto_a_enviar_wei = int((balance_origen_wei - gas_fee_estimada) * random.uniform(0.2, 0.7))
+        monto_a_enviar_wei = int((balance_origen_wei - gas_fee_estimada) * sr.uniform(0.2, 0.7))
 
         if monto_a_enviar_wei > 0:
             tx_params = {'to': destino.address, 'value': monto_a_enviar_wei}
             await enviar_transaccion(
                 web3, tx_params, origen.key, 
-                gas_price_multiplier=random.uniform(1.0, 1.05)
+                gas_price_multiplier=sr.uniform(1.0, 1.05)
             )
         
-        await asyncio.sleep(random.uniform(2, 5))
+        await asyncio.sleep(sr.uniform(2, 5))
 
     log.print("[green]✅ Tormenta de mezcla completada.")
 
@@ -81,7 +87,12 @@ async def _ejecutar_tormenta_de_mezcla(web3: AsyncWeb3, config: Dict, wallets: D
     log.print("[green]Fondos consolidados.")
 
 
-async def orquestador_epico(web3: AsyncWeb3, config: Dict, wallets: Dict, final_wallets: List[str]):
+async def orquestador_epico(
+    web3: AsyncWeb3,
+    config: Dict[str, Any],
+    wallets: Dict[str, Any],
+    final_wallets: List[str]
+) -> Dict[str, Any]:
     """Orquesta la estrategia de mezcla épica definida en la configuración."""
     # Iniciar orquestador con manejo de fallos
     gas_price = await web3.eth.gas_price
@@ -145,11 +156,11 @@ async def orquestador_epico(web3: AsyncWeb3, config: Dict, wallets: Dict, final_
             }
             await enviar_transaccion(
                 web3, tx_params, wallet_anterior.key,
-                gas_price_multiplier=random.uniform(1.0, 1.05)
+                gas_price_multiplier=sr.uniform(1.0, 1.05)
             )
             
             wallet_anterior = wallet_actual
-            await asyncio.sleep(random.uniform(3, 8)) # Pausa entre eslabones de la cadena
+            await asyncio.sleep(sr.uniform(3, 8)) # Pausa entre eslabones de la cadena
 
         log.print("[green]Financiación en cadena completada.")
         await asyncio.sleep(5)
@@ -171,7 +182,7 @@ async def orquestador_epico(web3: AsyncWeb3, config: Dict, wallets: Dict, final_
                 dest = final_wallets[0] if final_wallets else wallet_deposito.address
                 txh = await adapter.bridge(web3, wallet_deposito, amt_wei, b.get('to_chain'), dest)
                 bridge_hashes.append(txh)
-                await asyncio.sleep(random.uniform(3, 8))
+                await asyncio.sleep(sr.uniform(3, 8))
         log.print(f"[green]✅ Puentes ejecutados: {len(bridge_hashes)}")
         await asyncio.sleep(3)
 
@@ -188,7 +199,7 @@ async def orquestador_epico(web3: AsyncWeb3, config: Dict, wallets: Dict, final_
                 slip = d.get('slippage', 0.005)
                 txh = await adapter.swap(web3, wallet_deposito, per_swap, path, slip)
                 dex_hashes.append(txh)
-                await asyncio.sleep(random.uniform(3, 8))
+                await asyncio.sleep(sr.uniform(3, 8))
         log.print(f"[green]✅ Swaps DEX completados: {len(dex_hashes)}")
         await asyncio.sleep(3)
         
@@ -211,7 +222,7 @@ async def orquestador_epico(web3: AsyncWeb3, config: Dict, wallets: Dict, final_
                 }
                 await enviar_transaccion(
                     web3, tx_params, sub_wallet.key,
-                    gas_price_multiplier=random.uniform(1.0, 1.05)
+                    gas_price_multiplier=sr.uniform(1.0, 1.05)
                 )
                 log.print(f"Enviados {Web3.from_wei(tx_value, 'ether'):.4f} BNB a Exchange: {destino[:15]}...")
             
@@ -223,11 +234,11 @@ async def orquestador_epico(web3: AsyncWeb3, config: Dict, wallets: Dict, final_
                 }
                 await enviar_transaccion(
                     web3, tx_params, sub_wallet.key,
-                    gas_price_multiplier=random.uniform(1.0, 1.05)
+                    gas_price_multiplier=sr.uniform(1.0, 1.05)
                 )
                 log.print(f"Distribuidos {Web3.from_wei(tx_value, 'ether'):.4f} BNB a wallet final: {destino[:15]}...")
             
-            await asyncio.sleep(random.uniform(3, 8)) 
+            await asyncio.sleep(sr.uniform(3, 8)) 
             # Fin de la orquestación exitosa
             log.print("[bold green]✨ Orquestación completada sin errores.")
             # Generación de Merkle root para advanced reporting
