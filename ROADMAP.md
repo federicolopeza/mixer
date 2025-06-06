@@ -1,59 +1,57 @@
-# Roadmap SuperMixer v2
+# Roadmap de Mejoras para SuperMixer v2
 
-Este documento lista todas las mejoras pendientes para completar el "SuperMixer v2" con checklists para ir marcando a medida que se implementan.
+## Fase 1 (0–30 días): Showstoppers y fundamento "Beta mínimo"  
+- **R1: Acceso completo al código y dependencias**  
+  - Proporcionar/revisar `requirements.txt` y todo el código fuente.  
+  - Instalar en modo editable, fijar versiones críticas.  
+- **R2: Gestión robusta de dependencias**  
+  - Generar/pinnear `requirements.txt` (pip-compile).  
+  - Escanear con Safety y resolver vulnerabilidades críticas/altas.  
+- **R3: Seguridad criptográfica AES-GCM**  
+  - Auditar unicidad de IVs en todos los cifrados.  
+  - Añadir tests específicos de IVs y longitudes de etiqueta.  
+- **R4: Manejo seguro de claves privadas**  
+  - Revisar flujo y almacenamiento de mnemónicos/keys.  
+  - Asegurar uso de variables de entorno y evitar hard-code.  
+- **R5: Validación de entradas CLI & `strategy.json`**  
+  - Implementar esquema (pydantic/voluptuous) para configuración.  
+  - Añadir tests de inputs malformados.  
 
-## 1. Puentes Cross-Chain
-- [x] epic_mixer/bridges/__init__.py – factory de adapters
-- [x] epic_mixer/bridges/base.py – clase abstracta BaseBridgeAdapter
-- [x] epic_mixer/bridges/cbridge_adapter.py – implementar cBridge (envío, tracking, confirmación)
-- [x] epic_mixer/bridges/stargate_adapter.py – implementar Stargate (o equivalente)
+## Fase 2 (31–60 días): Harden de calidad y primeras pruebas E2E  
+- **R6: Integración de análisis estático**  
+  - Integrar Flake8, Pylint, Mypy y Bandit en CI.  
+  - Corregir issues críticos/High de cada herramienta.  
+- **R7: Primeros tests End-to-End en testnet**  
+  - Script E2E básico: `run_mixer.py --network testnet`.  
+  - Validar flujo completo y capturar excepciones.  
+- **R8: Fortalecer interacciones con puentes/DEXs**  
+  - Añadir manejo de errores, control de slippage configurable.  
+  - Mitigaciones básicas contra front-running.  
+- **R9: Pruebas exhaustivas de Failover**  
+  - Simular fallos de RPC/bridge/DEX y disparar vault recovery.  
+  - Validar que los fondos siempre acaben en la bóveda de emergencia.  
+- **R10: Revisión y tests de Merkle proofs**  
+  - Unit tests para árboles balanceados y no balanceados.  
+  - Verificar salado de hojas y root nonce.  
 
-## 2. Módulo de Swaps en DEX
-- [x] epic_mixer/dex/__init__.py – factory de adapters de DEX
-- [x] epic_mixer/dex/pancakeswap_adapter.py – swaps vía PancakeSwap v3
-- [x] epic_mixer/dex/oneinch_adapter.py – integración con 1inch API
+## Fase 3 (61–90 días): Cobertura, robustez y refinamiento  
+- **R11: Ampliar cobertura de unit + integración**  
+  - Objetivo ≥ 85 % (mock Web3, scheduler edge-cases).  
+- **R12: Mejora de logging y reporte de errores**  
+  - Estructurar logs (JSON, niveles), sanitizar datos sensibles.  
+  - Integrar Sentry o similar para monitorización de errores.  
+- **R13: Evaluación y mejora de aleatoriedad**  
+  - Revisar uso de `secrets.SystemRandom`.  
+  - Benchmark de patrones temporales y de ruido.  
+- **R14: Revisión lógica "Storm"**  
+  - Auditoría detallada del motor de transacciones en masa.  
+  - Optimizar complejidad ciclomática y flujos async.  
+- **R15: Refactorización de código**  
+  - Reducir complejidad en módulos críticos (Orchestrator, adapters).  
+  - Aplicar SRP/SoC y extraer librerías comunes.  
+- **R16: Mejoras en documentación**  
+  - Completar docstrings y diagrama Mermaid.  
+  - Añadir guía de contribución y casos de uso.  
 
-## 3. Generador de Ruido
-- [x] epic_mixer/noise_generator.py – micro-transacciones e interacciones "dust" con contratos populares
-
-## 4. Planificador Temporal
-- [x] epic_mixer/scheduler.py – calendarizar fases con apscheduler y delays aleatorios
-
-## 5. Seguridad Operacional (OpSec)
-- [x] epic_mixer/opsec.py – TorRPCProvider y anonimato RPC (HTTP/SOCKS)
-
-## 6. Manejo de Fallos y Recuperación
-- [x] epic_mixer/failover.py – retries automáticos y vault cold-fallback
-
-## 7. Reporte Avanzado / Pruebas de Merkle
-- [x] epic_mixer/utils/advanced_reporting.py – Merkle proofs y view-keys para revelación selectiva
-
-## 8. Integración en el Orquestador
-- [x] Fase de puentes (`get_bridge_adapter`)
-- [x] Swaps DEX
-- [x] Generar ruido antes y después de la tormenta
-- [x] Programación vía `MixerScheduler`
-- [x] Try/catch con `handle_failover`
-- [x] Adjuntar Merkle proofs al reporte final
-
-## 9. CLI y Validación de Configuración
-- [x] epic_mixer/cli.py – recapitulación de nuevas secciones en CLI
-- [x] epic_mixer/utils/config.py – validación básica de schema de la estrategia
-
-## 10. Documentación
-- [x] README.md – documentado flujo "SuperMixer v2" y uso de cada módulo
-- [x] .gitignore – configurado para reportes, Redis, logs y credenciales
-- [x] requirements.txt – actualizadas dependencias para v2
-- [x] strategy_v2.json.example – Ejemplo creado
-
-## 11. Dependencias
-- [x] `requirements.txt` – dependencias de v2 incluidas
-
-## 12. Pruebas Automáticas
-- [x] tests/unit/bridges
-- [x] tests/unit/dex
-- [x] tests/unit/noise_generator
-- [x] tests/unit/scheduler
-- [x] tests/integration/failover
-
-*Marca cada ítem como completado cuando implementes el módulo o la tarea correspondiente.* 
+---  
+Este roadmap permite avanzar de forma iterativa: primero resolver los "showstoppers", luego establecer calidad y pruebas, y finalmente optimizar arquitectura, cobertura y documentación para alcanzar una Beta segura y mantenible. 
