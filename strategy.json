@@ -1,7 +1,6 @@
 {
-    "strategy_description": "Mezcla de ~0.25 BNB. Pre-fondea 5 carteras de tormenta, ejecuta 15 rondas de mezcla y luego distribuye los fondos a través de 3 brazos estratégicos.",
-    "storm_wallets": 5,
     "mixing_rounds": 15,
+    "storm_wallets": 5,
     "storm_wallet_gas_amount_bnb": 0.002,
     "distribution": [
         {
