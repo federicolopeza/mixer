@@ -35,45 +35,50 @@ Epic Mixer no es un simple "tumbler". Es un **orquestador** que tú diriges. La 
 graph LR
     subgraph "Fase 1: Preparación"
         direction TB
-        U[👨‍💻 Tú] -- Ejecuta --> RUN[▶️ run_mixer.py]
-        RUN -- Inicia --> MAIN[🎬 main.py]
-        MAIN -- "Carga Estrategia" --> CONF[📄 utils/config.py]
-        MAIN -- "Crea Sesión Efímera" --> WLT[🔑 core/wallets.py]
+        U[👨‍💻 Usuario] -- Ejecuta --> RUN(▶️ run_mixer.py)
+        RUN -- Inicia --> MAIN{🎬 main.py}
+        MAIN -- Carga --> CONF([📄 strategy.json])
+        MAIN -- Crea Sesión --> WLT([🔑 core/wallets.py])
     end
 
-    subgraph "Fase 2: Depósito"
+    subgraph "Fase 2: Depósito de Fondos"
         direction TB
         PREP[Fase 1] --> FDEP[Fase 2]
-        MAIN -- "Espera Depósito" --> W3U[🔗 core/web3_utils.py]
-        W3U -- "Muestra QR/Dirección" --> U
-        U -- "Envía BNB" --> BLOCKCHAIN[🌐 Binance Smart Chain]
-        BLOCKCHAIN -- "Detecta Fondos" --> W3U
+        MAIN -- Espera Depósito --> W3U([🔗 core/web3_utils.py])
+        W3U -- Muestra Dirección/QR --> U
+        U -- Envía BNB --> BLOCKCHAIN[(🌐 Binance Smart Chain)]
+        BLOCKCHAIN -- Fondos Detectados --> W3U
     end
     
-    subgraph "Fase 3: Configuración de Destinos"
+    subgraph "Fase 3: Configuración Interactiva"
         direction TB
         FDEP --> FCONF[Fase 3]
-        W3U -- "Notifica a" --> MAIN
-        MAIN -- "Pide Datos Sensibles" --> CLI[🗣️ cli.py]
-        CLI -- "Pregunta Destinos y Pass" --> U
-        U -- "Introduce Datos" --> CLI
+        W3U -- Notifica --> MAIN
+        MAIN -- Pide Datos Sensibles --> CLI([🗣️ cli.py])
+        CLI -- Pregunta Destinos y Contraseña --> U
+        U -- Introduce Datos --> CLI
     end
 
-    subgraph "Fase 4: Orquestación y Reporte"
+    subgraph "Fase 4: Orquestación y Reporte Final"
         direction TB
         FCONF --> FORCH[Fase 4]
-        CLI -- "Devuelve Datos a" --> MAIN
-        MAIN -- "Inicia Mezcla" --> ORCH[🌪️ core/orchestrator.py]
-        ORCH -- "Fragmenta y Envía TXs" --> BLOCKCHAIN
-        ORCH -- "Finalizado, notifica a" --> MAIN
-        MAIN -- "Crea Reporte" --> REP[📦 utils/reporting.py]
-        REP -- "Guarda Encriptado" --> OUT[📄 reporte_encriptado.dat]
+        CLI -- Devuelve Datos --> MAIN
+        MAIN -- Inicia Mezcla --> ORCH([🌪️ core/orchestrator.py])
+        ORCH -- Ejecuta Estrategia --> BLOCKCHAIN
+        ORCH -- Notifica Finalización --> MAIN
+        MAIN -- Crea Reporte --> REP([📦 utils/reporting.py])
+        REP -- Guarda y Encripta --> OUT([📄 reporte_encriptado.dat])
     end
     
-    style PREP fill:#222,stroke:#333
-    style FDEP fill:#222,stroke:#333
-    style FCONF fill:#222,stroke:#333
-    style FORCH fill:#222,stroke:#333
+    %% Estilos para mejorar la legibilidad visual
+    style U fill:#3B4252,stroke:#81A1C1,color:#ECEFF4
+    style BLOCKCHAIN fill:#A3BE8C,stroke:#4C566A,color:#2E3440
+    style RUN fill:#BF616A,stroke:#D8DEE9,color:#ECEFF4
+    style OUT fill:#EBCB8B,stroke:#4C566A,color:#2E3440
+    style PREP fill:#2E3440,stroke:#5E81AC
+    style FDEP fill:#2E3440,stroke:#5E81AC
+    style FCONF fill:#2E3440,stroke:#5E81AC
+    style FORCH fill:#2E3440,stroke:#5E81AC
 ```
 
 ---
