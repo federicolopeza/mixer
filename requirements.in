@@ -1,0 +1,16 @@
+web3
+rich
+aiohttp
+qrcode
+mnemonic
+pycryptodome
+ccxt
+apscheduler
+redis
+numpy
+scipy
+aiohttp-socks
+stem
+pytest
+pytest-asyncio
+pydantic 
