@@ -1,6 +1,6 @@
 # 🌪️ SuperMixer v2
 
-[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue)] [![License: MIT](https://img.shields.io/badge/License-MIT-green)] [![Estado: Beta](https://img.shields.io/badge/Estado-Beta-blue)] [![CI](https://github.com/Falopp/mixer/actions/workflows/static-analysis.yml/badge.svg)] [![codecov](https://codecov.io/gh/Falopp/mixer/branch/main/graph/badge.svg)]
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue)] [![License: MIT](https://img.shields.io/badge/License-MIT-green)] [![Estado: Beta](https://img.shields.io/badge/Estado-Beta-blue)] [![CI](https://github.com/federicolopeza/mixer/actions/workflows/static-analysis.yml/badge.svg)] [![codecov](https://codecov.io/gh/federicolopeza/mixer/branch/main/graph/badge.svg)]
 
 > **SuperMixer v2** es un orquestador avanzado de ofuscación de transacciones on-chain, diseñado para maximizar la privacidad, resistencia al análisis y la fiabilidad en entornos DeFi.
 
@@ -70,7 +70,7 @@ sequenceDiagram
 ## ⚙️ Instalación Rápida
 ```bash
 # Clonar repositorio
-git clone https://github.com/Falopp/mixer.git
+git clone https://github.com/federicolopeza/mixer.git
 cd mixer
 
 # Crear y activar entorno virtual
